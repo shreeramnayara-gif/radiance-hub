@@ -19,8 +19,8 @@ export function DevRoleSwitcher() {
   };
 
   return (
-    <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 mb-3">
-      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300 mb-2">
+    <div className="rounded-md border border-warning/40 bg-warning/10 p-3 mb-3">
+      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-warning mb-2">
         <FlaskConical className="h-3 w-3" /> Dev Mode · Role Switch
       </div>
       <div className="space-y-1.5">
