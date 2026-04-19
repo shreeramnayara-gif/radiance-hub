@@ -22,7 +22,11 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
+const DEV_BYPASS_KEY = "aspire.dev_bypass";
 const DEV_ROLES_KEY = "aspire.dev_active_roles";
+
+const readBypassFromStorage = () =>
+  typeof window !== "undefined" && window.localStorage.getItem(DEV_BYPASS_KEY) === "1";
 
 /**
  * DEV-ONLY mock session. Tree-shaken out of prod bundles because every reference
