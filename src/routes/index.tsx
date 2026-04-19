@@ -73,7 +73,7 @@ function LandingPage() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/80 to-background" />
         <div className="absolute -z-10 top-0 left-1/2 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-[radial-gradient(circle,_var(--accent)_0%,_transparent_70%)] opacity-40 blur-3xl" />
 
-        <div className="mx-auto max-w-7xl px-6 pt-20 pb-28 md:pt-32 md:pb-40">
+        <div className="mx-auto max-w-7xl px-6 pt-20 pb-28 md:pt-32 md:pb-40 text-slate-600 bg-red-800">
           <div className="flex flex-col items-center text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-1.5 text-xs font-medium text-muted-foreground mb-8 shadow-sm">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
