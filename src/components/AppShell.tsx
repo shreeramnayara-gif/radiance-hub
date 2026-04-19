@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useAuth } from "@/auth/AuthProvider";
 import { ROLES, ROLE_LABELS, type Role } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
+import { DevRoleSwitcher } from "@/components/DevRoleSwitcher";
 import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity } from "lucide-react";
 
 interface NavItem {
