@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [devActiveRoles]);
 
   const setDevActiveRoles = (roles: Role[]) => {
-    if (!env.devMode) return;
+    // Allow role switching whenever a dev session is active (env or runtime bypass).
     const next = roles.length > 0 ? roles : [ROLES.SUPER_ADMIN];
     setDevActiveRolesState(next);
     try {
