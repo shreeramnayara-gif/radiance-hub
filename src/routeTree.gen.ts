@@ -9,38 +9,169 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AppStudiesRouteImport } from './routes/app.studies'
+import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppPacsRouteImport } from './routes/app.pacs'
+import { Route as AppFreePoolRouteImport } from './routes/app.free-pool'
+import { Route as AppCmsRouteImport } from './routes/app.cms'
+import { Route as AppBillingRouteImport } from './routes/app.billing'
+import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
 
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppStudiesRoute = AppStudiesRouteImport.update({
+  id: '/studies',
+  path: '/studies',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPacsRoute = AppPacsRouteImport.update({
+  id: '/pacs',
+  path: '/pacs',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFreePoolRoute = AppFreePoolRouteImport.update({
+  id: '/free-pool',
+  path: '/free-pool',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCmsRoute = AppCmsRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBillingRoute = AppBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppApprovalsRoute = AppApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/approvals': typeof AppApprovalsRoute
+  '/app/billing': typeof AppBillingRoute
+  '/app/cms': typeof AppCmsRoute
+  '/app/free-pool': typeof AppFreePoolRoute
+  '/app/pacs': typeof AppPacsRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/studies': typeof AppStudiesRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/approvals': typeof AppApprovalsRoute
+  '/app/billing': typeof AppBillingRoute
+  '/app/cms': typeof AppCmsRoute
+  '/app/free-pool': typeof AppFreePoolRoute
+  '/app/pacs': typeof AppPacsRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/studies': typeof AppStudiesRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/approvals': typeof AppApprovalsRoute
+  '/app/billing': typeof AppBillingRoute
+  '/app/cms': typeof AppCmsRoute
+  '/app/free-pool': typeof AppFreePoolRoute
+  '/app/pacs': typeof AppPacsRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/studies': typeof AppStudiesRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/approvals'
+    | '/app/billing'
+    | '/app/cms'
+    | '/app/free-pool'
+    | '/app/pacs'
+    | '/app/reports'
+    | '/app/studies'
+    | '/auth/callback'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app/approvals'
+    | '/app/billing'
+    | '/app/cms'
+    | '/app/free-pool'
+    | '/app/pacs'
+    | '/app/reports'
+    | '/app/studies'
+    | '/auth/callback'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/app/approvals'
+    | '/app/billing'
+    | '/app/cms'
+    | '/app/free-pool'
+    | '/app/pacs'
+    | '/app/reports'
+    | '/app/studies'
+    | '/auth/callback'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  AuthCallbackRoute: typeof AuthCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +179,101 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/studies': {
+      id: '/app/studies'
+      path: '/studies'
+      fullPath: '/app/studies'
+      preLoaderRoute: typeof AppStudiesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/reports': {
+      id: '/app/reports'
+      path: '/reports'
+      fullPath: '/app/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pacs': {
+      id: '/app/pacs'
+      path: '/pacs'
+      fullPath: '/app/pacs'
+      preLoaderRoute: typeof AppPacsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/free-pool': {
+      id: '/app/free-pool'
+      path: '/free-pool'
+      fullPath: '/app/free-pool'
+      preLoaderRoute: typeof AppFreePoolRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/cms': {
+      id: '/app/cms'
+      path: '/cms'
+      fullPath: '/app/cms'
+      preLoaderRoute: typeof AppCmsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/billing': {
+      id: '/app/billing'
+      path: '/billing'
+      fullPath: '/app/billing'
+      preLoaderRoute: typeof AppBillingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/approvals': {
+      id: '/app/approvals'
+      path: '/approvals'
+      fullPath: '/app/approvals'
+      preLoaderRoute: typeof AppApprovalsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppApprovalsRoute: typeof AppApprovalsRoute
+  AppBillingRoute: typeof AppBillingRoute
+  AppCmsRoute: typeof AppCmsRoute
+  AppFreePoolRoute: typeof AppFreePoolRoute
+  AppPacsRoute: typeof AppPacsRoute
+  AppReportsRoute: typeof AppReportsRoute
+  AppStudiesRoute: typeof AppStudiesRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppApprovalsRoute: AppApprovalsRoute,
+  AppBillingRoute: AppBillingRoute,
+  AppCmsRoute: AppCmsRoute,
+  AppFreePoolRoute: AppFreePoolRoute,
+  AppPacsRoute: AppPacsRoute,
+  AppReportsRoute: AppReportsRoute,
+  AppStudiesRoute: AppStudiesRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  AuthCallbackRoute: AuthCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
