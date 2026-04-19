@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useAuth } from "@/auth/AuthProvider";
 import { ROLES, ROLE_LABELS, type Role } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
+import { DevRoleSwitcher } from "@/components/DevRoleSwitcher";
 import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity } from "lucide-react";
 
 interface NavItem {
@@ -51,6 +52,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <div className="border-t border-sidebar-border p-4">
+          <DevRoleSwitcher />
           <div className="text-sm font-medium truncate">{(user?.profile?.name as string) ?? user?.profile?.preferred_username ?? "Unknown user"}</div>
           <div className="text-xs text-sidebar-foreground/60 mb-3">{displayRole}</div>
           <Button
