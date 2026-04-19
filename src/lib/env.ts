@@ -23,4 +23,10 @@ export const env = {
   ohif: {
     viewerUrl: import.meta.env.VITE_OHIF_VIEWER_URL ?? "",
   },
+  /**
+   * DEV-ONLY: bypasses OIDC and assumes a mock Super Admin session.
+   * Hard-gated to import.meta.env.DEV so production builds always see `false`,
+   * even if VITE_DEV_MODE were somehow set during a prod build.
+   */
+  devMode: import.meta.env.DEV && import.meta.env.VITE_DEV_MODE === "true",
 } as const;
