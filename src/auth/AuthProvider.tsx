@@ -149,12 +149,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       },
       enableDevBypass: () => {
-        if (!env.devMode) return;
+        try {
+          window.localStorage.setItem(DEV_BYPASS_KEY, "1");
+        } catch {
+          /* ignore */
+        }
         setIsDevBypass(true);
         setUser(buildDevUser(devActiveRoles));
         setLoading(false);
       },
       disableDevBypass: () => {
+        try {
+          window.localStorage.removeItem(DEV_BYPASS_KEY);
+        } catch {
+          /* ignore */
+        }
         setIsDevBypass(false);
         setUser(null);
       },
