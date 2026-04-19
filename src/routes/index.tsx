@@ -119,14 +119,6 @@ function LandingPage() {
               </Button>
             </div>
 
-            {!isAuthenticated && !isDevBypass && (
-              <button
-                onClick={enableDevBypass}
-                className="mt-8 text-xs text-muted-foreground/70 hover:text-primary underline underline-offset-4 transition-colors"
-              >
-                Preview workspace (dev bypass · no Keycloak required)
-              </button>
-            )}
           </div>
         </div>
       </section>
