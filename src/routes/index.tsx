@@ -32,7 +32,7 @@ const FALLBACK = {
 };
 
 function LandingPage() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login, enableDevBypass, isDevBypass } = useAuth();
   const { data } = useQuery({
     queryKey: ["cms", "landing"],
     queryFn: () => cmsService.getLanding().catch(() => null),
@@ -53,11 +53,16 @@ function LandingPage() {
               <a key={n.href} href={n.href} className="hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all hover:after:w-full">{n.label}</a>
             ))}
           </nav>
-          {isAuthenticated ? (
-            <Button asChild size="sm" className="rounded-full"><Link to="/app">Open studio <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link></Button>
-          ) : (
-            <Button size="sm" onClick={() => login()} className="rounded-full px-5">Sign in</Button>
-          )}
+          <div className="flex items-center gap-2">
+            {isAuthenticated ? (
+              <Button asChild size="sm" className="rounded-full"><Link to="/app">Open studio <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link></Button>
+            ) : (
+              <>
+                <Button size="sm" variant="ghost" onClick={() => login()} className="rounded-full hidden sm:inline-flex">Sign in</Button>
+                <Button size="sm" onClick={() => login()} className="rounded-full px-5">Sign up</Button>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
@@ -100,14 +105,28 @@ function LandingPage() {
                   <Link to="/app">Open studio <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               ) : (
-                <Button size="lg" onClick={() => login()} className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20">
-                  {cms.hero.ctaLabel} <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <>
+                  <Button size="lg" onClick={() => login()} className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20">
+                    Sign up <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => login()} className="rounded-full px-8 h-12 text-base bg-card/40 backdrop-blur">
+                    Sign in
+                  </Button>
+                </>
               )}
-              <Button size="lg" variant="outline" asChild className="rounded-full px-8 h-12 text-base bg-card/40 backdrop-blur">
+              <Button size="lg" variant="ghost" asChild className="rounded-full px-8 h-12 text-base">
                 <a href="#platform">Discover</a>
               </Button>
             </div>
+
+            {!isAuthenticated && !isDevBypass && (
+              <button
+                onClick={enableDevBypass}
+                className="mt-8 text-xs text-muted-foreground/70 hover:text-primary underline underline-offset-4 transition-colors"
+              >
+                Preview workspace (dev bypass · no Keycloak required)
+              </button>
+            )}
           </div>
         </div>
       </section>
