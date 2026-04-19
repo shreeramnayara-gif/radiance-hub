@@ -3,27 +3,28 @@ import { useQuery } from "@tanstack/react-query";
 import { cmsService } from "@/lib/services";
 import { useAuth } from "@/auth/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { Activity, ShieldCheck, Lock, Users, FileImage, Wallet } from "lucide-react";
+import { ArrowRight, Activity, Layers, Workflow, Sparkles } from "lucide-react";
+import logo from "@/assets/aspire-logo.png";
+import heroBg from "@/assets/hero-bg.jpg";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
 const FALLBACK = {
-  brand: { name: "Aspire Reporting Hub", tagline: "Teleradiology, engineered for hospitals." },
+  brand: { name: "Aspire Reporting Hub", tagline: "Reporting, refined." },
   hero: {
-    headline: "Hospital-grade teleradiology workflow.",
-    subheadline:
-      "OIDC-secured. Orthanc-powered. OHIF-enabled. Aspire orchestrates studies, radiologists, and billing — without ever exposing patient origin to the reporting clinician.",
+    headline: "Reporting,\nrefined.",
+    subheadline: "A modern reporting hub built for clinicians who value clarity, speed, and craft.",
     ctaLabel: "Sign in",
     ctaHref: "/login",
   },
   nav: [
-    { label: "Workflow", href: "#workflow" },
-    { label: "Security", href: "#security" },
+    { label: "Platform", href: "#platform" },
+    { label: "Studio", href: "#studio" },
     { label: "Contact", href: "#contact" },
   ],
-  contact: { email: "ops@aspirereporting.health", phone: "", address: "" },
+  contact: { email: "hello@aspirereporting.health", phone: "", address: "" },
   footer: {
     copyright: `© ${new Date().getFullYear()} Aspire Reporting Hub`,
     links: [],
@@ -32,103 +33,162 @@ const FALLBACK = {
 
 function LandingPage() {
   const { isAuthenticated, login } = useAuth();
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["cms", "landing"],
     queryFn: () => cmsService.getLanding().catch(() => null),
   });
-
   const cms = data ?? FALLBACK;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-10">
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-md bg-primary text-primary-foreground grid place-items-center font-display font-bold">A</div>
-            <div className="font-display font-semibold tracking-tight">{cms.brand.name}</div>
-          </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
+    <div className="min-h-screen bg-background text-foreground antialiased">
+      {/* HEADER */}
+      <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <img src={logo} alt="Aspire" width={32} height={32} className="h-8 w-8 transition-transform group-hover:scale-105" />
+            <span className="font-display font-bold tracking-tight text-base">{cms.brand.name.split(" ")[0]}</span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             {cms.nav.map((n) => (
-              <a key={n.href} href={n.href} className="hover:text-foreground transition">{n.label}</a>
+              <a key={n.href} href={n.href} className="hover:text-foreground transition-colors">{n.label}</a>
             ))}
           </nav>
           {isAuthenticated ? (
-            <Button asChild size="sm"><Link to="/app">Open dashboard</Link></Button>
+            <Button asChild size="sm"><Link to="/app">Open studio <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link></Button>
           ) : (
-            <Button size="sm" onClick={() => login()}>Sign in</Button>
+            <Button size="sm" onClick={() => login()} className="rounded-full px-5">Sign in</Button>
           )}
         </div>
       </header>
 
+      {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--accent),_transparent_60%)] opacity-60" />
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground mb-6">
-              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-              OIDC-secured · HIPAA-aware architecture
+        <img
+          src={heroBg}
+          alt=""
+          width={1920}
+          height={1080}
+          className="absolute inset-0 -z-10 w-full h-full object-cover opacity-25"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/80 to-background" />
+        <div className="absolute -z-10 top-0 left-1/2 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-[radial-gradient(circle,_var(--accent)_0%,_transparent_70%)] opacity-40 blur-3xl" />
+
+        <div className="mx-auto max-w-7xl px-6 pt-20 pb-28 md:pt-32 md:pb-40">
+          <div className="flex flex-col items-center text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-1.5 text-xs font-medium text-muted-foreground mb-8 shadow-sm">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span>New · Clinician-first reporting workspace</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-display font-bold leading-[1.05] tracking-tight">
+
+            <img src={logo} alt="" width={96} height={96} className="h-20 w-20 mb-6 drop-shadow-lg" />
+
+            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight max-w-4xl whitespace-pre-line bg-gradient-to-br from-foreground via-foreground to-primary/70 bg-clip-text text-transparent">
               {cms.hero.headline}
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground max-w-2xl">{cms.hero.subheadline}</p>
-            <div className="mt-8 flex gap-3">
-              <Button size="lg" onClick={() => (isAuthenticated ? null : login())} asChild={isAuthenticated}>
-                {isAuthenticated ? <Link to="/app">Open dashboard</Link> : <span>{cms.hero.ctaLabel}</span>}
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <a href="#workflow">See workflow</a>
+
+            <p className="mt-8 text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed">
+              {cms.hero.subheadline}
+            </p>
+
+            <div className="mt-10 flex flex-col sm:flex-row gap-3">
+              {isAuthenticated ? (
+                <Button size="lg" asChild className="rounded-full px-8 h-12 text-base">
+                  <Link to="/app">Open studio <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
+              ) : (
+                <Button size="lg" onClick={() => login()} className="rounded-full px-8 h-12 text-base">
+                  {cms.hero.ctaLabel} <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+              <Button size="lg" variant="outline" asChild className="rounded-full px-8 h-12 text-base">
+                <a href="#platform">Discover</a>
               </Button>
             </div>
-            {isLoading && <p className="mt-4 text-xs text-muted-foreground">Loading site content…</p>}
           </div>
         </div>
       </section>
 
-      <section id="workflow" className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-6 py-20 grid gap-6 md:grid-cols-3">
-          {[
-            { icon: FileImage, title: "Orthanc-driven studies", body: "Live DICOM ingestion. Modality-aware Free Pool. Anonymized referral context for radiologists." },
-            { icon: Activity, title: "Strict state machine", body: "Free Pool → Assigned → In Reporting → Submitted → Finalized. Audit-logged at every step." },
-            { icon: Wallet, title: "User-specific billing", body: "Per-radiologist payouts and per-client invoices. Recalculated on edits, returns, or rate-card changes." },
-          ].map((f) => (
-            <div key={f.title} className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-clinical)]">
-              <f.icon className="h-6 w-6 text-primary mb-4" />
-              <h3 className="font-display font-semibold text-lg">{f.title}</h3>
-              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{f.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="security" className="border-t border-border bg-muted/40">
-        <div className="mx-auto max-w-6xl px-6 py-20 grid gap-6 md:grid-cols-2">
-          <div>
-            <h2 className="font-display text-3xl font-bold tracking-tight">Security and identity</h2>
-            <p className="mt-4 text-muted-foreground">Single source of truth: your OIDC provider. Aspire never stores or sees plaintext passwords. Role claims drive UI access. All sessions are JWT-only.</p>
+      {/* PLATFORM */}
+      <section id="platform" className="border-t border-border/60">
+        <div className="mx-auto max-w-7xl px-6 py-24">
+          <div className="max-w-2xl mb-16">
+            <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-4">The Platform</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight">
+              Everything you need.<br />
+              <span className="text-muted-foreground">Nothing you don't.</span>
+            </h2>
           </div>
-          <ul className="space-y-3 text-sm">
+
+          <div className="grid gap-px bg-border rounded-2xl overflow-hidden md:grid-cols-3">
             {[
-              { icon: Lock, t: "OpenID Connect only", d: "Login, logout, password reset all flow through your IdP." },
-              { icon: Users, t: "Approval-gated accounts", d: "Super Admin must approve every new user; certificates verified before activation." },
-              { icon: ShieldCheck, t: "Radiologist anonymity", d: "Hospital and centre identity stripped from radiologist views." },
-            ].map((i) => (
-              <li key={i.t} className="flex gap-3 rounded-lg border border-border bg-card p-4">
-                <i.icon className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-medium">{i.t}</div>
-                  <div className="text-muted-foreground">{i.d}</div>
+              { icon: Layers, title: "Connected", body: "One workspace for every case, every team, every signature." },
+              { icon: Workflow, title: "Orchestrated", body: "Cases move from intake to finalization with quiet precision." },
+              { icon: Activity, title: "Insightful", body: "Live signals on throughput, turnaround, and team performance." },
+            ].map((f) => (
+              <div key={f.title} className="bg-card p-10 group hover:bg-accent/30 transition-colors">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 grid place-items-center mb-6 group-hover:bg-primary/15 transition-colors">
+                  <f.icon className="h-5 w-5 text-primary" />
                 </div>
-              </li>
+                <h3 className="font-display font-semibold text-xl mb-3">{f.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{f.body}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      <footer id="contact" className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between text-sm text-muted-foreground">
-          <div>{cms.footer.copyright}</div>
-          <div>{cms.contact.email}</div>
+      {/* STUDIO BAND */}
+      <section id="studio" className="border-t border-border/60 bg-sidebar text-sidebar-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--sidebar-primary)_0%,_transparent_60%)] opacity-30" />
+        <div className="mx-auto max-w-7xl px-6 py-24 relative grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-sidebar-primary font-semibold mb-4">The Studio</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
+              Built for the people who read.
+            </h2>
+            <p className="text-sidebar-foreground/70 text-lg leading-relaxed mb-8 max-w-lg">
+              Aspire is shaped around the rhythm of a working clinician — keyboard-first, distraction-free, and deeply respectful of your time.
+            </p>
+            <Button size="lg" variant="secondary" onClick={() => login()} className="rounded-full px-8">
+              Get started <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+          <div className="relative">
+            <div className="aspect-square max-w-md mx-auto rounded-3xl bg-gradient-to-br from-sidebar-primary/30 to-transparent border border-sidebar-border p-1 shadow-2xl">
+              <div className="w-full h-full rounded-[22px] bg-sidebar-accent/40 backdrop-blur grid place-items-center">
+                <img src={logo} alt="" width={200} height={200} className="h-48 w-48 opacity-90 drop-shadow-2xl" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t border-border/60">
+        <div className="mx-auto max-w-4xl px-6 py-28 text-center">
+          <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight">
+            Ready when you are.
+          </h2>
+          <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
+            Sign in to access your workspace.
+          </p>
+          <div className="mt-10">
+            <Button size="lg" onClick={() => login()} className="rounded-full px-10 h-12 text-base">
+              Sign in <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer id="contact" className="border-t border-border/60">
+        <div className="mx-auto max-w-7xl px-6 py-12 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src={logo} alt="Aspire" width={28} height={28} className="h-7 w-7" loading="lazy" />
+            <span className="font-display font-semibold tracking-tight">{cms.brand.name}</span>
+          </Link>
+          <div className="text-sm text-muted-foreground">{cms.contact.email}</div>
+          <div className="text-sm text-muted-foreground">{cms.footer.copyright}</div>
         </div>
       </footer>
     </div>
