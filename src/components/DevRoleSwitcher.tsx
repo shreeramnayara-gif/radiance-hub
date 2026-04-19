@@ -10,7 +10,9 @@ import { FlaskConical } from "lucide-react";
  */
 export function DevRoleSwitcher() {
   const { isDevBypass, devActiveRoles, setDevActiveRoles } = useAuth();
-  if (!env.devMode || !isDevBypass) return null;
+  // Show whenever a dev mock session is active (env DEV_MODE OR runtime bypass).
+  if (!isDevBypass) return null;
+  void env;
 
   const all = Object.values(ROLES) as Role[];
   const toggle = (role: Role, on: boolean) => {
