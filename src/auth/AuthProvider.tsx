@@ -22,7 +22,11 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
+const DEV_BYPASS_KEY = "aspire.dev_bypass";
 const DEV_ROLES_KEY = "aspire.dev_active_roles";
+
+const readBypassFromStorage = () =>
+  typeof window !== "undefined" && window.localStorage.getItem(DEV_BYPASS_KEY) === "1";
 
 /**
  * DEV-ONLY mock session. Tree-shaken out of prod bundles because every reference
@@ -44,10 +48,10 @@ const buildDevUser = (roles: Role[]): User =>
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setLoading] = useState(true);
-  // In DEV_MODE we auto-enable bypass on first paint; otherwise off.
-  const [isDevBypass, setIsDevBypass] = useState(env.devMode);
+  // Bypass active if env DEV_MODE OR persisted runtime bypass flag.
+  const [isDevBypass, setIsDevBypass] = useState(() => env.devMode || readBypassFromStorage());
   const [devActiveRoles, setDevActiveRolesState] = useState<Role[]>(() => {
-    if (!env.devMode || typeof window === "undefined") return [ROLES.SUPER_ADMIN];
+    if (typeof window === "undefined") return [ROLES.SUPER_ADMIN];
     try {
       const raw = window.localStorage.getItem(DEV_ROLES_KEY);
       if (raw) {
@@ -60,9 +64,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return [ROLES.SUPER_ADMIN];
   });
 
-  // DEV_MODE: auto-mount mock session, skip OIDC entirely.
+  // Mock session: auto-mount whenever bypass is active (env or runtime).
   useEffect(() => {
-    if (env.devMode) {
+    if (isDevBypass) {
       setUser(buildDevUser(devActiveRoles));
       setLoading(false);
       return;
@@ -145,12 +149,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       },
       enableDevBypass: () => {
-        if (!env.devMode) return;
+        try {
+          window.localStorage.setItem(DEV_BYPASS_KEY, "1");
+        } catch {
+          /* ignore */
+        }
         setIsDevBypass(true);
         setUser(buildDevUser(devActiveRoles));
         setLoading(false);
       },
       disableDevBypass: () => {
+        try {
+          window.localStorage.removeItem(DEV_BYPASS_KEY);
+        } catch {
+          /* ignore */
+        }
         setIsDevBypass(false);
         setUser(null);
       },
