@@ -1,4 +1,5 @@
-import { Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { useAuth } from "@/auth/AuthProvider";
 import { ROLES, ROLE_LABELS, type Role } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ const NAV: NavItem[] = [
   { to: "/app/cms", label: "Landing CMS", icon: Settings, allow: [ROLES.SUPER_ADMIN] },
 ];
 
-export function AppShell() {
+export function AppShell({ children }: { children: ReactNode }) {
   const { user, roles, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -65,9 +66,7 @@ export function AppShell() {
           </Button>
         </div>
       </aside>
-      <main className="flex flex-col min-h-screen">
-        <Outlet />
-      </main>
+      <main className="flex flex-col min-h-screen">{children}</main>
     </div>
   );
 }
