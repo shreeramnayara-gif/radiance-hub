@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
 const FALLBACK = {
   brand: { name: "Aspire Reporting Hub", tagline: "Reporting, refined." },
   hero: {
-    headline: "Intelligence\nin every read.",
+    headline: "Quality\nin every read.",
     subheadline: "A modern reporting hub built for clinicians who value clarity, speed, and craft.",
     ctaLabel: "Sign in",
     ctaHref: "/login",
