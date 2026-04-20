@@ -12,6 +12,14 @@ import type {
   ViewerUrl,
 } from "./types";
 import type { WorkflowStatus } from "./workflow";
+import type {
+  BillingLine,
+  BillingLinesQuery,
+  BillingLinesResponse,
+  RateCard,
+  RateCardInput,
+} from "./billing";
+import { env } from "./env";
 
 export const usersService = {
   list: (params?: { status?: UserStatus }) => {
@@ -81,6 +89,48 @@ export const reportsService = {
   submit: (studyId: string) =>
     apiFetch<Report>(`/studies/${studyId}/report/submit`, { method: "POST" }),
   versions: (studyId: string) => apiFetch<Report[]>(`/studies/${studyId}/report/versions`),
+};
+
+function buildBillingQuery(q?: BillingLinesQuery): string {
+  if (!q) return "";
+  const sp = new URLSearchParams();
+  if (q.kind) sp.set("kind", q.kind);
+  if (q.partyId) sp.set("partyId", q.partyId);
+  if (q.studyId) sp.set("studyId", q.studyId);
+  if (q.status?.length) sp.set("status", q.status.join(","));
+  if (q.from) sp.set("from", q.from);
+  if (q.to) sp.set("to", q.to);
+  const s = sp.toString();
+  return s ? `?${s}` : "";
+}
+
+export const billingService = {
+  listRateCards: (params?: { ownerRole?: string; ownerId?: string; active?: boolean }) => {
+    const sp = new URLSearchParams();
+    if (params?.ownerRole) sp.set("ownerRole", params.ownerRole);
+    if (params?.ownerId) sp.set("ownerId", params.ownerId);
+    if (typeof params?.active === "boolean") sp.set("active", String(params.active));
+    const s = sp.toString();
+    return apiFetch<RateCard[]>(`/billing/rate-cards${s ? `?${s}` : ""}`);
+  },
+  getRateCard: (id: string) => apiFetch<RateCard>(`/billing/rate-cards/${id}`),
+  myRateCard: () => apiFetch<RateCard>(`/billing/my-rate-card`),
+  createRateCard: (input: RateCardInput) =>
+    apiFetch<RateCard>(`/billing/rate-cards`, { method: "POST", body: JSON.stringify(input) }),
+  updateRateCard: (id: string, patch: Partial<RateCardInput>) =>
+    apiFetch<RateCard>(`/billing/rate-cards/${id}`, { method: "PUT", body: JSON.stringify(patch) }),
+  deleteRateCard: (id: string) => apiFetch<void>(`/billing/rate-cards/${id}`, { method: "DELETE" }),
+
+  listLines: (q?: BillingLinesQuery) =>
+    apiFetch<BillingLinesResponse>(`/billing/lines${buildBillingQuery(q)}`),
+  recalculate: (studyId: string) =>
+    apiFetch<BillingLine[]>(`/billing/recalculate/${studyId}`, { method: "POST" }),
+  markPaid: (id: string) =>
+    apiFetch<BillingLine>(`/billing/lines/${id}/mark-paid`, { method: "POST" }),
+
+  /** Direct CSV download URL — opens the export endpoint with the user's bearer token via fetch + blob. */
+  exportCsvUrl: (q: BillingLinesQuery & { kind: "PAYOUT" | "INVOICE" }) =>
+    `${env.api.baseUrl}/billing/export${buildBillingQuery(q).replace(/^\?/, "?format=csv&")}`,
 };
 
 export const commentsService = {
