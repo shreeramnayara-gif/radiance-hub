@@ -22,6 +22,7 @@ import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
 import { Route as AppBillingIndexRouteImport } from './routes/app.billing.index'
 import { Route as AppStudiesStudyIdRouteImport } from './routes/app.studies.$studyId'
+import { Route as AppBillingRateCardsRouteImport } from './routes/app.billing.rate-cards'
 import { Route as AppBillingPayoutsRouteImport } from './routes/app.billing.payouts'
 import { Route as AppBillingInvoicesRouteImport } from './routes/app.billing.invoices'
 
@@ -90,6 +91,11 @@ const AppStudiesStudyIdRoute = AppStudiesStudyIdRouteImport.update({
   path: '/$studyId',
   getParentRoute: () => AppStudiesRoute,
 } as any)
+const AppBillingRateCardsRoute = AppBillingRateCardsRouteImport.update({
+  id: '/rate-cards',
+  path: '/rate-cards',
+  getParentRoute: () => AppBillingRoute,
+} as any)
 const AppBillingPayoutsRoute = AppBillingPayoutsRouteImport.update({
   id: '/payouts',
   path: '/payouts',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
   '/app/billing/payouts': typeof AppBillingPayoutsRoute
+  '/app/billing/rate-cards': typeof AppBillingRateCardsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing/': typeof AppBillingIndexRoute
 }
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
   '/app/billing/payouts': typeof AppBillingPayoutsRoute
+  '/app/billing/rate-cards': typeof AppBillingRateCardsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing': typeof AppBillingIndexRoute
 }
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
   '/app/billing/payouts': typeof AppBillingPayoutsRoute
+  '/app/billing/rate-cards': typeof AppBillingRateCardsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing/': typeof AppBillingIndexRoute
 }
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/billing/invoices'
     | '/app/billing/payouts'
+    | '/app/billing/rate-cards'
     | '/app/studies/$studyId'
     | '/app/billing/'
   fileRoutesByTo: FileRoutesByTo
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/billing/invoices'
     | '/app/billing/payouts'
+    | '/app/billing/rate-cards'
     | '/app/studies/$studyId'
     | '/app/billing'
   id:
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/billing/invoices'
     | '/app/billing/payouts'
+    | '/app/billing/rate-cards'
     | '/app/studies/$studyId'
     | '/app/billing/'
   fileRoutesById: FileRoutesById
@@ -302,6 +314,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStudiesStudyIdRouteImport
       parentRoute: typeof AppStudiesRoute
     }
+    '/app/billing/rate-cards': {
+      id: '/app/billing/rate-cards'
+      path: '/rate-cards'
+      fullPath: '/app/billing/rate-cards'
+      preLoaderRoute: typeof AppBillingRateCardsRouteImport
+      parentRoute: typeof AppBillingRoute
+    }
     '/app/billing/payouts': {
       id: '/app/billing/payouts'
       path: '/payouts'
@@ -322,12 +341,14 @@ declare module '@tanstack/react-router' {
 interface AppBillingRouteChildren {
   AppBillingInvoicesRoute: typeof AppBillingInvoicesRoute
   AppBillingPayoutsRoute: typeof AppBillingPayoutsRoute
+  AppBillingRateCardsRoute: typeof AppBillingRateCardsRoute
   AppBillingIndexRoute: typeof AppBillingIndexRoute
 }
 
 const AppBillingRouteChildren: AppBillingRouteChildren = {
   AppBillingInvoicesRoute: AppBillingInvoicesRoute,
   AppBillingPayoutsRoute: AppBillingPayoutsRoute,
+  AppBillingRateCardsRoute: AppBillingRateCardsRoute,
   AppBillingIndexRoute: AppBillingIndexRoute,
 }
 
