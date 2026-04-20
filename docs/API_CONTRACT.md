@@ -216,8 +216,103 @@ interface Comment {
 
 ---
 
+# SLICE 3 — Billing Engine (contract-driven)
+
+Triggered automatically by the backend on `SUBMITTED`, recalculated on revision and refunded/voided on release-back-to-pool. Frontend never computes prices — it reads/writes rate cards and reads payouts/invoices.
+
+## Concepts
+
+- **RateCard** — owned by a single user (radiologist, hospital, or diagnostic centre). Contains a list of **rules** matched by `modality` + optional `bodyPart`.
+- **Rule resolution** (server-side, deterministic):
+  1. exact `(modality, bodyPart)` match
+  2. `(modality, bodyPart=null)` fallback
+  3. card `defaultAmount` if defined
+  4. otherwise → `0` and a `MISSING_RULE` warning is attached to the line item
+- A radiologist's card produces **payout** lines. A hospital/centre's card produces **invoice** lines.
+- Currency is per-card (ISO 4217). Mixing currencies across users is allowed; aggregation is per currency.
+
+## Triggers (server-enforced)
+
+| Workflow event | Billing effect |
+|---|---|
+| Study `→ SUBMITTED` | create payout line for assignee + invoice line for referring hospital/centre, status `PENDING` |
+| Report version `> 1` (revision) | upsert lines against latest report version, mark prior as `SUPERSEDED` |
+| Study `→ FREE_POOL` (release) | void any non-finalized lines for that study |
+| Study `→ FINALIZED` | mark lines as `LOCKED` (immutable, eligible for payout/invoice run) |
+
+## Types
+
+```ts
+type Currency = string; // ISO 4217, e.g. "USD", "EUR", "INR"
+
+interface RateRule {
+  id: string;
+  modality: string;            // DICOM modality code, required
+  bodyPart?: string | null;    // null = any body part for this modality
+  amount: number;              // minor units NOT used; this is decimal in card.currency
+}
+
+interface RateCard {
+  id: string;
+  ownerId: string;             // user id
+  ownerName: string;
+  ownerRole: "radiologist" | "hospital" | "diagnostic_centre";
+  currency: Currency;
+  defaultAmount?: number | null;
+  rules: RateRule[];
+  active: boolean;
+  effectiveFrom: string;       // ISO
+  effectiveTo?: string | null; // ISO; null = open-ended
+  createdAt: string;
+  updatedAt: string;
+}
+
+type BillingLineStatus = "PENDING" | "LOCKED" | "VOID" | "SUPERSEDED" | "PAID";
+type BillingLineKind   = "PAYOUT" | "INVOICE";
+
+interface BillingLine {
+  id: string;
+  kind: BillingLineKind;
+  studyId: string;
+  studyInstanceUID: string;
+  modality: string;
+  bodyPart?: string | null;
+  partyId: string;             // radiologist (PAYOUT) or hospital/centre (INVOICE)
+  partyName: string;
+  partyRole: "radiologist" | "hospital" | "diagnostic_centre";
+  rateCardId: string;
+  reportVersion: number;
+  amount: number;
+  currency: Currency;
+  status: BillingLineStatus;
+  warning?: "MISSING_RULE" | null;
+  createdAt: string;
+  lockedAt?: string | null;
+  paidAt?: string | null;
+}
+```
+
+## Endpoints
+
+### Rate cards (admin: `super_admin` | `sub_admin`)
+
+- `GET /billing/rate-cards?ownerRole=&ownerId=&active=` → `RateCard[]`
+- `GET /billing/rate-cards/{id}` → `RateCard`
+- `POST /billing/rate-cards` body `Omit<RateCard,"id"|"createdAt"|"updatedAt">` → `RateCard`
+- `PUT /billing/rate-cards/{id}` body `Partial<RateCard>` → `RateCard`
+- `DELETE /billing/rate-cards/{id}` → `204` (soft-delete sets `active=false`)
+- `GET /billing/my-rate-card` → the caller's own active card (any role) or `404`
+
+### Lines
+
+- `GET /billing/lines?kind=PAYOUT|INVOICE&partyId=&from=&to=&status=&studyId=` — admins see all; radiologists implicitly scoped to `partyId=self,kind=PAYOUT`; hospital/centre to `partyId=self,kind=INVOICE`.
+  Response: `{ items: BillingLine[]; total: number; subtotalsByCurrency: Record<Currency, number> }`
+- `POST /billing/recalculate/{studyId}` (admin) → recomputes lines for a study. Returns the new `BillingLine[]`.
+- `POST /billing/lines/{id}/mark-paid` (admin) → returns updated `BillingLine`.
+- `GET /billing/export?kind=PAYOUT|INVOICE&from=&to=&format=csv` → CSV stream (handled by the browser as a download).
+
 ## What's next (future slices)
 
-- Slice 3: `GET /billing/rate-cards`, `POST /billing/recalculate/{studyId}`, payouts, invoices
 - Slice 4: `GET /pacs/sources`, ingestion logs, health
 - Slice 5: `GET /search`, `GET /analytics/*`
+
