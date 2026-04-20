@@ -22,6 +22,8 @@ import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
 import { Route as AppBillingIndexRouteImport } from './routes/app.billing.index'
 import { Route as AppStudiesStudyIdRouteImport } from './routes/app.studies.$studyId'
+import { Route as AppBillingPayoutsRouteImport } from './routes/app.billing.payouts'
+import { Route as AppBillingInvoicesRouteImport } from './routes/app.billing.invoices'
 
 const AppRoute = AppRouteImport.update({
   id: '/app',
@@ -88,6 +90,16 @@ const AppStudiesStudyIdRoute = AppStudiesStudyIdRouteImport.update({
   path: '/$studyId',
   getParentRoute: () => AppStudiesRoute,
 } as any)
+const AppBillingPayoutsRoute = AppBillingPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => AppBillingRoute,
+} as any)
+const AppBillingInvoicesRoute = AppBillingInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
+  getParentRoute: () => AppBillingRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,6 +113,8 @@ export interface FileRoutesByFullPath {
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
+  '/app/billing/invoices': typeof AppBillingInvoicesRoute
+  '/app/billing/payouts': typeof AppBillingPayoutsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing/': typeof AppBillingIndexRoute
 }
@@ -114,6 +128,8 @@ export interface FileRoutesByTo {
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app': typeof AppIndexRoute
+  '/app/billing/invoices': typeof AppBillingInvoicesRoute
+  '/app/billing/payouts': typeof AppBillingPayoutsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing': typeof AppBillingIndexRoute
 }
@@ -130,6 +146,8 @@ export interface FileRoutesById {
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
+  '/app/billing/invoices': typeof AppBillingInvoicesRoute
+  '/app/billing/payouts': typeof AppBillingPayoutsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing/': typeof AppBillingIndexRoute
 }
@@ -147,6 +165,8 @@ export interface FileRouteTypes {
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
+    | '/app/billing/invoices'
+    | '/app/billing/payouts'
     | '/app/studies/$studyId'
     | '/app/billing/'
   fileRoutesByTo: FileRoutesByTo
@@ -160,6 +180,8 @@ export interface FileRouteTypes {
     | '/app/studies'
     | '/auth/callback'
     | '/app'
+    | '/app/billing/invoices'
+    | '/app/billing/payouts'
     | '/app/studies/$studyId'
     | '/app/billing'
   id:
@@ -175,6 +197,8 @@ export interface FileRouteTypes {
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
+    | '/app/billing/invoices'
+    | '/app/billing/payouts'
     | '/app/studies/$studyId'
     | '/app/billing/'
   fileRoutesById: FileRoutesById
@@ -278,14 +302,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStudiesStudyIdRouteImport
       parentRoute: typeof AppStudiesRoute
     }
+    '/app/billing/payouts': {
+      id: '/app/billing/payouts'
+      path: '/payouts'
+      fullPath: '/app/billing/payouts'
+      preLoaderRoute: typeof AppBillingPayoutsRouteImport
+      parentRoute: typeof AppBillingRoute
+    }
+    '/app/billing/invoices': {
+      id: '/app/billing/invoices'
+      path: '/invoices'
+      fullPath: '/app/billing/invoices'
+      preLoaderRoute: typeof AppBillingInvoicesRouteImport
+      parentRoute: typeof AppBillingRoute
+    }
   }
 }
 
 interface AppBillingRouteChildren {
+  AppBillingInvoicesRoute: typeof AppBillingInvoicesRoute
+  AppBillingPayoutsRoute: typeof AppBillingPayoutsRoute
   AppBillingIndexRoute: typeof AppBillingIndexRoute
 }
 
 const AppBillingRouteChildren: AppBillingRouteChildren = {
+  AppBillingInvoicesRoute: AppBillingInvoicesRoute,
+  AppBillingPayoutsRoute: AppBillingPayoutsRoute,
   AppBillingIndexRoute: AppBillingIndexRoute,
 }
 
