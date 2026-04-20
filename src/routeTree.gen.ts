@@ -20,6 +20,7 @@ import { Route as AppFreePoolRouteImport } from './routes/app.free-pool'
 import { Route as AppCmsRouteImport } from './routes/app.cms'
 import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
+import { Route as AppStudiesStudyIdRouteImport } from './routes/app.studies.$studyId'
 
 const AppRoute = AppRouteImport.update({
   id: '/app',
@@ -76,6 +77,11 @@ const AppApprovalsRoute = AppApprovalsRouteImport.update({
   path: '/approvals',
   getParentRoute: () => AppRoute,
 } as any)
+const AppStudiesStudyIdRoute = AppStudiesStudyIdRouteImport.update({
+  id: '/$studyId',
+  path: '/$studyId',
+  getParentRoute: () => AppStudiesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -86,9 +92,10 @@ export interface FileRoutesByFullPath {
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRoute
   '/app/reports': typeof AppReportsRoute
-  '/app/studies': typeof AppStudiesRoute
+  '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
+  '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,9 +105,10 @@ export interface FileRoutesByTo {
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRoute
   '/app/reports': typeof AppReportsRoute
-  '/app/studies': typeof AppStudiesRoute
+  '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app': typeof AppIndexRoute
+  '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,9 +120,10 @@ export interface FileRoutesById {
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRoute
   '/app/reports': typeof AppReportsRoute
-  '/app/studies': typeof AppStudiesRoute
+  '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
+  '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
+    | '/app/studies/$studyId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/app/studies'
     | '/auth/callback'
     | '/app'
+    | '/app/studies/$studyId'
   id:
     | '__root__'
     | '/'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
+    | '/app/studies/$studyId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -242,8 +254,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppApprovalsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/studies/$studyId': {
+      id: '/app/studies/$studyId'
+      path: '/$studyId'
+      fullPath: '/app/studies/$studyId'
+      preLoaderRoute: typeof AppStudiesStudyIdRouteImport
+      parentRoute: typeof AppStudiesRoute
+    }
   }
 }
+
+interface AppStudiesRouteChildren {
+  AppStudiesStudyIdRoute: typeof AppStudiesStudyIdRoute
+}
+
+const AppStudiesRouteChildren: AppStudiesRouteChildren = {
+  AppStudiesStudyIdRoute: AppStudiesStudyIdRoute,
+}
+
+const AppStudiesRouteWithChildren = AppStudiesRoute._addFileChildren(
+  AppStudiesRouteChildren,
+)
 
 interface AppRouteChildren {
   AppApprovalsRoute: typeof AppApprovalsRoute
@@ -252,7 +283,7 @@ interface AppRouteChildren {
   AppFreePoolRoute: typeof AppFreePoolRoute
   AppPacsRoute: typeof AppPacsRoute
   AppReportsRoute: typeof AppReportsRoute
-  AppStudiesRoute: typeof AppStudiesRoute
+  AppStudiesRoute: typeof AppStudiesRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -263,7 +294,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFreePoolRoute: AppFreePoolRoute,
   AppPacsRoute: AppPacsRoute,
   AppReportsRoute: AppReportsRoute,
-  AppStudiesRoute: AppStudiesRoute,
+  AppStudiesRoute: AppStudiesRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -277,3 +308,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
