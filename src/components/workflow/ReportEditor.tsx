@@ -31,7 +31,7 @@ export function ReportEditor({ initialHtml, readOnly, onChange }: Props) {
   // Keep editor in sync if parent swaps draft (e.g. after submit/refetch).
   useEffect(() => {
     if (editor && initialHtml && initialHtml !== editor.getHTML()) {
-      editor.commands.setContent(initialHtml, { emitUpdate: false });
+      editor.commands.setContent(initialHtml, false);
       lastEmitted.current = initialHtml;
     }
   }, [initialHtml, editor]);
