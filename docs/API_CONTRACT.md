@@ -355,3 +355,35 @@ read everything (monitoring); other roles have no access.
 State machine implications: `IngestionEvent.status = "ingested"` is what creates
 a `Study` in `FREE_POOL`. Workflow transitions take it from there.
 
+
+---
+
+# SLICE 5 — Global Search & Analytics
+
+## Search
+
+- `GET /search?q=&modality=&status=&from=&to=&page=&pageSize=` → `SearchResponse`
+- Indexes patient name, accession, `studyInstanceUID`, modality, body part,
+  report text. Backend MUST anonymize patient fields in hits returned to
+  radiologists (replace name with "Anonymous Referral Case").
+
+## Analytics
+
+All analytics are role-scoped on the server. Frontend just calls the endpoint
+that matches the active role; the server enforces visibility.
+
+- `GET /analytics/system` → `SystemAnalytics`
+  Roles: `super_admin`, `sub_admin`. System-wide counters, daily volume, status
+  distribution, and average TAT (hours from study creation to FINALIZED).
+
+- `GET /analytics/radiologists` → `RadiologistAnalytics[]`
+  Roles: `super_admin`, `sub_admin` see all; `radiologist` gets only their own
+  row. Workload, finalized counters, modality mix, average reporting minutes.
+
+- `GET /analytics/hospitals` → `HospitalAnalytics[]`
+  Roles: `super_admin`, `sub_admin` see all; `hospital` / `diagnostic_centre`
+  get only their own row. Upload volume, awaiting-report, finalized 30 d, TAT.
+
+- `GET /analytics/billing` → `BillingAnalytics`
+  Roles: `super_admin` only. Payouts/invoices grouped by currency, outstanding
+  invoices, and top-N radiologists/clients for the current month.

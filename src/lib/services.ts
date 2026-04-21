@@ -29,6 +29,14 @@ import type {
   SyncLogListResponse,
   SyncLogQuery,
 } from "./pacs";
+import type {
+  BillingAnalytics,
+  HospitalAnalytics,
+  RadiologistAnalytics,
+  SearchQuery,
+  SearchResponse,
+  SystemAnalytics,
+} from "./analytics";
 import { env } from "./env";
 
 export const usersService = {
