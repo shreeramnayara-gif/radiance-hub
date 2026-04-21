@@ -19,6 +19,16 @@ import type {
   RateCard,
   RateCardInput,
 } from "./billing";
+import type {
+  IngestionListResponse,
+  IngestionQuery,
+  PacsEndpoint,
+  PacsEndpointInput,
+  PacsHealthSummary,
+  PacsTestResult,
+  SyncLogListResponse,
+  SyncLogQuery,
+} from "./pacs";
 import { env } from "./env";
 
 export const usersService = {
@@ -140,4 +150,57 @@ export const commentsService = {
       method: "POST",
       body: JSON.stringify({ body, parentId }),
     }),
+};
+
+/* -------- Slice 4: PACS Integration -------- */
+
+function buildIngestionQuery(q?: IngestionQuery): string {
+  if (!q) return "";
+  const sp = new URLSearchParams();
+  if (q.endpointId) sp.set("endpointId", q.endpointId);
+  if (q.status?.length) sp.set("status", q.status.join(","));
+  if (q.from) sp.set("from", q.from);
+  if (q.to) sp.set("to", q.to);
+  if (q.q) sp.set("q", q.q);
+  if (q.page) sp.set("page", String(q.page));
+  if (q.pageSize) sp.set("pageSize", String(q.pageSize));
+  const s = sp.toString();
+  return s ? `?${s}` : "";
+}
+
+function buildLogsQuery(q?: SyncLogQuery): string {
+  if (!q) return "";
+  const sp = new URLSearchParams();
+  if (q.endpointId) sp.set("endpointId", q.endpointId);
+  if (q.level?.length) sp.set("level", q.level.join(","));
+  if (q.from) sp.set("from", q.from);
+  if (q.to) sp.set("to", q.to);
+  if (q.page) sp.set("page", String(q.page));
+  if (q.pageSize) sp.set("pageSize", String(q.pageSize));
+  const s = sp.toString();
+  return s ? `?${s}` : "";
+}
+
+export const pacsService = {
+  listEndpoints: () => apiFetch<PacsEndpoint[]>(`/pacs/endpoints`),
+  getEndpoint: (id: string) => apiFetch<PacsEndpoint>(`/pacs/endpoints/${id}`),
+  createEndpoint: (input: PacsEndpointInput) =>
+    apiFetch<PacsEndpoint>(`/pacs/endpoints`, { method: "POST", body: JSON.stringify(input) }),
+  updateEndpoint: (id: string, patch: Partial<PacsEndpointInput>) =>
+    apiFetch<PacsEndpoint>(`/pacs/endpoints/${id}`, { method: "PUT", body: JSON.stringify(patch) }),
+  deleteEndpoint: (id: string) => apiFetch<void>(`/pacs/endpoints/${id}`, { method: "DELETE" }),
+  testEndpoint: (id: string) =>
+    apiFetch<PacsTestResult>(`/pacs/endpoints/${id}/test`, { method: "POST" }),
+  syncEndpoint: (id: string) =>
+    apiFetch<{ queued: true }>(`/pacs/endpoints/${id}/sync`, { method: "POST" }),
+  enableEndpoint: (id: string) =>
+    apiFetch<PacsEndpoint>(`/pacs/endpoints/${id}/enable`, { method: "POST" }),
+  disableEndpoint: (id: string) =>
+    apiFetch<PacsEndpoint>(`/pacs/endpoints/${id}/disable`, { method: "POST" }),
+
+  listIngestion: (q?: IngestionQuery) =>
+    apiFetch<IngestionListResponse>(`/pacs/ingestion${buildIngestionQuery(q)}`),
+  listLogs: (q?: SyncLogQuery) =>
+    apiFetch<SyncLogListResponse>(`/pacs/logs${buildLogsQuery(q)}`),
+  health: () => apiFetch<PacsHealthSummary>(`/pacs/health`),
 };

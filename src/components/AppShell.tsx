@@ -20,7 +20,7 @@ const NAV: NavItem[] = [
   { to: "/app/free-pool", label: "Free Pool", icon: Activity, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST] },
   { to: "/app/reports", label: "Reports", icon: FileText, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST] },
   { to: "/app/billing", label: "Billing", icon: Wallet, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST, ROLES.HOSPITAL, ROLES.DIAGNOSTIC_CENTRE] },
-  { to: "/app/pacs", label: "PACS", icon: Plug, allow: [ROLES.SUPER_ADMIN, ROLES.PACS] },
+  { to: "/app/pacs", label: "PACS", icon: Plug, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.PACS] },
   { to: "/app/cms", label: "Landing CMS", icon: Settings, allow: [ROLES.SUPER_ADMIN] },
 ];
 

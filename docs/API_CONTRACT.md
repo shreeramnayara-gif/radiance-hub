@@ -311,8 +311,47 @@ interface BillingLine {
 - `POST /billing/lines/{id}/mark-paid` (admin) → returns updated `BillingLine`.
 - `GET /billing/export?kind=PAYOUT|INVOICE&from=&to=&format=csv` → CSV stream (handled by the browser as a download).
 
-## What's next (future slices)
+---
 
-- Slice 4: `GET /pacs/sources`, ingestion logs, health
-- Slice 5: `GET /search`, `GET /analytics/*`
+# SLICE 4 — PACS Integration Dashboard
+
+Manages external imaging sources (Orthanc, DICOMweb peers, DIMSE nodes) and surfaces
+ingestion telemetry to admins. The frontend never speaks DICOM directly — the
+backend mediates everything and only exposes the JSON shapes below.
+
+**Roles:** `super_admin` and `pacs` can read & write endpoints; `sub_admin` may
+read everything (monitoring); other roles have no access.
+
+## Endpoints (configuration)
+
+- `GET    /pacs/endpoints` → `PacsEndpoint[]`
+- `POST   /pacs/endpoints` body `PacsEndpointInput` → `PacsEndpoint`
+- `GET    /pacs/endpoints/{id}` → `PacsEndpoint`
+- `PUT    /pacs/endpoints/{id}` body `Partial<PacsEndpointInput>` → `PacsEndpoint`
+- `DELETE /pacs/endpoints/{id}` → `204`
+- `POST   /pacs/endpoints/{id}/test` → `PacsTestResult` (probes connectivity)
+- `POST   /pacs/endpoints/{id}/sync` → `{ queued: true }` (triggers a manual pull)
+- `POST   /pacs/endpoints/{id}/enable` / `/disable` → `PacsEndpoint`
+
+## Ingestion monitoring
+
+- `GET /pacs/ingestion?endpointId=&status=&from=&to=&q=&page=&pageSize=` → `IngestionListResponse`
+- Each event records the originating endpoint, the resulting `studyId` (once
+  ingested), and an `anonymized` flag. Backend MUST anonymize PHI before any
+  radiologist-visible payload is exposed elsewhere.
+
+## Sync logs
+
+- `GET /pacs/logs?endpointId=&level=&from=&to=&page=&pageSize=` → `SyncLogListResponse`
+- `level` is one of `info | warn | error`. `op` is a free-form tag identifying
+  the protocol op (`c-find`, `qido`, `poll`, `auth`, ...).
+
+## Health
+
+- `GET /pacs/health` → `PacsHealthSummary` — rollup across all endpoints with
+  per-endpoint reachability, 24 h ingested/rejected counters, and an optional
+  throughput sparkline.
+
+State machine implications: `IngestionEvent.status = "ingested"` is what creates
+a `Study` in `FREE_POOL`. Workflow transitions take it from there.
 
