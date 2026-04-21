@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AppStudiesRouteImport } from './routes/app.studies'
+import { Route as AppSearchRouteImport } from './routes/app.search'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPacsRouteImport } from './routes/app.pacs'
 import { Route as AppFreePoolRouteImport } from './routes/app.free-pool'
@@ -53,6 +54,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 const AppStudiesRoute = AppStudiesRouteImport.update({
   id: '/studies',
   path: '/studies',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSearchRoute = AppSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReportsRoute = AppReportsRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
+  '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app': typeof AppIndexRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
+  '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
@@ -206,6 +215,7 @@ export interface FileRouteTypes {
     | '/app/free-pool'
     | '/app/pacs'
     | '/app/reports'
+    | '/app/search'
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/app/cms'
     | '/app/free-pool'
     | '/app/reports'
+    | '/app/search'
     | '/app/studies'
     | '/auth/callback'
     | '/app'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/app/free-pool'
     | '/app/pacs'
     | '/app/reports'
+    | '/app/search'
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
@@ -302,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/studies'
       fullPath: '/app/studies'
       preLoaderRoute: typeof AppStudiesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/search': {
+      id: '/app/search'
+      path: '/search'
+      fullPath: '/app/search'
+      preLoaderRoute: typeof AppSearchRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reports': {
@@ -466,6 +485,7 @@ interface AppRouteChildren {
   AppFreePoolRoute: typeof AppFreePoolRoute
   AppPacsRoute: typeof AppPacsRouteWithChildren
   AppReportsRoute: typeof AppReportsRoute
+  AppSearchRoute: typeof AppSearchRoute
   AppStudiesRoute: typeof AppStudiesRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -477,6 +497,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFreePoolRoute: AppFreePoolRoute,
   AppPacsRoute: AppPacsRouteWithChildren,
   AppReportsRoute: AppReportsRoute,
+  AppSearchRoute: AppSearchRoute,
   AppStudiesRoute: AppStudiesRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
