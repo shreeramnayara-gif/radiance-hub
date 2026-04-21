@@ -18,12 +18,12 @@ function AnalyticsPage() {
   const isRad = roles.includes(ROLES.RADIOLOGIST);
   const isClient = roles.includes(ROLES.HOSPITAL) || roles.includes(ROLES.DIAGNOSTIC_CENTRE);
 
-  const tabs: Array<{ key: TabKey; label: string; show: boolean }> = [
-    { key: "system", label: "System", show: isSuperAdmin || isSubAdmin },
-    { key: "radiologists", label: "Radiologists", show: isSuperAdmin || isSubAdmin || isRad },
-    { key: "hospitals", label: isClient ? "My uploads" : "Hospitals", show: isSuperAdmin || isSubAdmin || isClient },
-    { key: "billing", label: "Billing", show: isSuperAdmin },
-  ].filter((t) => t.show);
+  const tabs: Array<{ key: TabKey; label: string; show: boolean }> = ([
+    { key: "system" as TabKey, label: "System", show: isSuperAdmin || isSubAdmin },
+    { key: "radiologists" as TabKey, label: "Radiologists", show: isSuperAdmin || isSubAdmin || isRad },
+    { key: "hospitals" as TabKey, label: isClient ? "My uploads" : "Hospitals", show: isSuperAdmin || isSubAdmin || isClient },
+    { key: "billing" as TabKey, label: "Billing", show: isSuperAdmin },
+  ]).filter((t) => t.show);
 
   const [active, setActive] = useState<TabKey>(tabs[0]?.key ?? "radiologists");
 
