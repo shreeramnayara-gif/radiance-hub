@@ -21,6 +21,7 @@ import { Route as AppFreePoolRouteImport } from './routes/app.free-pool'
 import { Route as AppCmsRouteImport } from './routes/app.cms'
 import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
+import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppPacsIndexRouteImport } from './routes/app.pacs.index'
 import { Route as AppBillingIndexRouteImport } from './routes/app.billing.index'
 import { Route as AppStudiesStudyIdRouteImport } from './routes/app.studies.$studyId'
@@ -91,6 +92,11 @@ const AppApprovalsRoute = AppApprovalsRouteImport.update({
   path: '/approvals',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPacsIndexRoute = AppPacsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -140,6 +146,7 @@ const AppBillingInvoicesRoute = AppBillingInvoicesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/app/analytics'
     | '/app/approvals'
     | '/app/billing'
     | '/app/cms'
@@ -231,6 +241,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app/analytics'
     | '/app/approvals'
     | '/app/cms'
     | '/app/free-pool'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/app/analytics'
     | '/app/approvals'
     | '/app/billing'
     | '/app/cms'
@@ -363,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/approvals'
       fullPath: '/app/approvals'
       preLoaderRoute: typeof AppApprovalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/pacs/': {
@@ -479,6 +498,7 @@ const AppStudiesRouteWithChildren = AppStudiesRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppApprovalsRoute: typeof AppApprovalsRoute
   AppBillingRoute: typeof AppBillingRouteWithChildren
   AppCmsRoute: typeof AppCmsRoute
@@ -491,6 +511,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
   AppApprovalsRoute: AppApprovalsRoute,
   AppBillingRoute: AppBillingRouteWithChildren,
   AppCmsRoute: AppCmsRoute,
