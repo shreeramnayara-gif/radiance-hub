@@ -19,6 +19,16 @@ import type {
   RateCard,
   RateCardInput,
 } from "./billing";
+import type {
+  IngestionListResponse,
+  IngestionQuery,
+  PacsEndpoint,
+  PacsEndpointInput,
+  PacsHealthSummary,
+  PacsTestResult,
+  SyncLogListResponse,
+  SyncLogQuery,
+} from "./pacs";
 import { env } from "./env";
 
 export const usersService = {
