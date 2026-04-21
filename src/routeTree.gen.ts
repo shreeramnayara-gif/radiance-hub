@@ -14,12 +14,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AppStudiesRouteImport } from './routes/app.studies'
+import { Route as AppSearchRouteImport } from './routes/app.search'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPacsRouteImport } from './routes/app.pacs'
 import { Route as AppFreePoolRouteImport } from './routes/app.free-pool'
 import { Route as AppCmsRouteImport } from './routes/app.cms'
 import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
+import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppPacsIndexRouteImport } from './routes/app.pacs.index'
 import { Route as AppBillingIndexRouteImport } from './routes/app.billing.index'
 import { Route as AppStudiesStudyIdRouteImport } from './routes/app.studies.$studyId'
@@ -55,6 +57,11 @@ const AppStudiesRoute = AppStudiesRouteImport.update({
   path: '/studies',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSearchRoute = AppSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -83,6 +90,11 @@ const AppBillingRoute = AppBillingRouteImport.update({
 const AppApprovalsRoute = AppApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPacsIndexRoute = AppPacsIndexRouteImport.update({
@@ -134,12 +146,14 @@ const AppBillingInvoicesRoute = AppBillingInvoicesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
+  '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
@@ -155,10 +169,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app': typeof AppIndexRoute
@@ -176,12 +192,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
+  '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
@@ -200,12 +218,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/app/analytics'
     | '/app/approvals'
     | '/app/billing'
     | '/app/cms'
     | '/app/free-pool'
     | '/app/pacs'
     | '/app/reports'
+    | '/app/search'
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
@@ -221,10 +241,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app/analytics'
     | '/app/approvals'
     | '/app/cms'
     | '/app/free-pool'
     | '/app/reports'
+    | '/app/search'
     | '/app/studies'
     | '/auth/callback'
     | '/app'
@@ -241,12 +263,14 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/app/analytics'
     | '/app/approvals'
     | '/app/billing'
     | '/app/cms'
     | '/app/free-pool'
     | '/app/pacs'
     | '/app/reports'
+    | '/app/search'
     | '/app/studies'
     | '/auth/callback'
     | '/app/'
@@ -304,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStudiesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/search': {
+      id: '/app/search'
+      path: '/search'
+      fullPath: '/app/search'
+      preLoaderRoute: typeof AppSearchRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/reports': {
       id: '/app/reports'
       path: '/reports'
@@ -344,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/approvals'
       fullPath: '/app/approvals'
       preLoaderRoute: typeof AppApprovalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/pacs/': {
@@ -460,23 +498,27 @@ const AppStudiesRouteWithChildren = AppStudiesRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppApprovalsRoute: typeof AppApprovalsRoute
   AppBillingRoute: typeof AppBillingRouteWithChildren
   AppCmsRoute: typeof AppCmsRoute
   AppFreePoolRoute: typeof AppFreePoolRoute
   AppPacsRoute: typeof AppPacsRouteWithChildren
   AppReportsRoute: typeof AppReportsRoute
+  AppSearchRoute: typeof AppSearchRoute
   AppStudiesRoute: typeof AppStudiesRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
   AppApprovalsRoute: AppApprovalsRoute,
   AppBillingRoute: AppBillingRouteWithChildren,
   AppCmsRoute: AppCmsRoute,
   AppFreePoolRoute: AppFreePoolRoute,
   AppPacsRoute: AppPacsRouteWithChildren,
   AppReportsRoute: AppReportsRoute,
+  AppSearchRoute: AppSearchRoute,
   AppStudiesRoute: AppStudiesRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }

@@ -4,7 +4,7 @@ import { useAuth } from "@/auth/AuthProvider";
 import { ROLES, ROLE_LABELS, type Role } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { DevRoleSwitcher } from "@/components/DevRoleSwitcher";
-import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity, Search, BarChart3 } from "lucide-react";
 
 interface NavItem {
   to: string;
@@ -15,6 +15,8 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { to: "/app", label: "Overview", icon: LayoutDashboard, allow: Object.values(ROLES) },
+  { to: "/app/search", label: "Search", icon: Search, allow: Object.values(ROLES) },
+  { to: "/app/analytics", label: "Analytics", icon: BarChart3, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST, ROLES.HOSPITAL, ROLES.DIAGNOSTIC_CENTRE] },
   { to: "/app/approvals", label: "User Approvals", icon: Users, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN] },
   { to: "/app/studies", label: "Studies", icon: FileImage, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST, ROLES.HOSPITAL, ROLES.DIAGNOSTIC_CENTRE] },
   { to: "/app/free-pool", label: "Free Pool", icon: Activity, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST] },

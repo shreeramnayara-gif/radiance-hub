@@ -29,6 +29,14 @@ import type {
   SyncLogListResponse,
   SyncLogQuery,
 } from "./pacs";
+import type {
+  BillingAnalytics,
+  HospitalAnalytics,
+  RadiologistAnalytics,
+  SearchQuery,
+  SearchResponse,
+  SystemAnalytics,
+} from "./analytics";
 import { env } from "./env";
 
 export const usersService = {
@@ -203,4 +211,30 @@ export const pacsService = {
   listLogs: (q?: SyncLogQuery) =>
     apiFetch<SyncLogListResponse>(`/pacs/logs${buildLogsQuery(q)}`),
   health: () => apiFetch<PacsHealthSummary>(`/pacs/health`),
+};
+
+/* -------- Slice 5: Search & Analytics -------- */
+
+function buildSearchQuery(q: SearchQuery): string {
+  const sp = new URLSearchParams();
+  if (q.q) sp.set("q", q.q);
+  if (q.modality?.length) sp.set("modality", q.modality.join(","));
+  if (q.status?.length) sp.set("status", q.status.join(","));
+  if (q.from) sp.set("from", q.from);
+  if (q.to) sp.set("to", q.to);
+  if (q.page) sp.set("page", String(q.page));
+  if (q.pageSize) sp.set("pageSize", String(q.pageSize));
+  const s = sp.toString();
+  return s ? `?${s}` : "";
+}
+
+export const searchService = {
+  search: (q: SearchQuery) => apiFetch<SearchResponse>(`/search${buildSearchQuery(q)}`),
+};
+
+export const analyticsService = {
+  system: () => apiFetch<SystemAnalytics>(`/analytics/system`),
+  radiologists: () => apiFetch<RadiologistAnalytics[]>(`/analytics/radiologists`),
+  hospitals: () => apiFetch<HospitalAnalytics[]>(`/analytics/hospitals`),
+  billing: () => apiFetch<BillingAnalytics>(`/analytics/billing`),
 };
