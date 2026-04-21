@@ -20,8 +20,12 @@ import { Route as AppFreePoolRouteImport } from './routes/app.free-pool'
 import { Route as AppCmsRouteImport } from './routes/app.cms'
 import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
+import { Route as AppPacsIndexRouteImport } from './routes/app.pacs.index'
 import { Route as AppBillingIndexRouteImport } from './routes/app.billing.index'
 import { Route as AppStudiesStudyIdRouteImport } from './routes/app.studies.$studyId'
+import { Route as AppPacsLogsRouteImport } from './routes/app.pacs.logs'
+import { Route as AppPacsIngestionRouteImport } from './routes/app.pacs.ingestion'
+import { Route as AppPacsEndpointsRouteImport } from './routes/app.pacs.endpoints'
 import { Route as AppBillingRateCardsRouteImport } from './routes/app.billing.rate-cards'
 import { Route as AppBillingPayoutsRouteImport } from './routes/app.billing.payouts'
 import { Route as AppBillingInvoicesRouteImport } from './routes/app.billing.invoices'
@@ -81,6 +85,11 @@ const AppApprovalsRoute = AppApprovalsRouteImport.update({
   path: '/approvals',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPacsIndexRoute = AppPacsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPacsRoute,
+} as any)
 const AppBillingIndexRoute = AppBillingIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -90,6 +99,21 @@ const AppStudiesStudyIdRoute = AppStudiesStudyIdRouteImport.update({
   id: '/$studyId',
   path: '/$studyId',
   getParentRoute: () => AppStudiesRoute,
+} as any)
+const AppPacsLogsRoute = AppPacsLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AppPacsRoute,
+} as any)
+const AppPacsIngestionRoute = AppPacsIngestionRouteImport.update({
+  id: '/ingestion',
+  path: '/ingestion',
+  getParentRoute: () => AppPacsRoute,
+} as any)
+const AppPacsEndpointsRoute = AppPacsEndpointsRouteImport.update({
+  id: '/endpoints',
+  path: '/endpoints',
+  getParentRoute: () => AppPacsRoute,
 } as any)
 const AppBillingRateCardsRoute = AppBillingRateCardsRouteImport.update({
   id: '/rate-cards',
@@ -114,7 +138,7 @@ export interface FileRoutesByFullPath {
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
-  '/app/pacs': typeof AppPacsRoute
+  '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -122,15 +146,18 @@ export interface FileRoutesByFullPath {
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
   '/app/billing/payouts': typeof AppBillingPayoutsRoute
   '/app/billing/rate-cards': typeof AppBillingRateCardsRoute
+  '/app/pacs/endpoints': typeof AppPacsEndpointsRoute
+  '/app/pacs/ingestion': typeof AppPacsIngestionRoute
+  '/app/pacs/logs': typeof AppPacsLogsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing/': typeof AppBillingIndexRoute
+  '/app/pacs/': typeof AppPacsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
-  '/app/pacs': typeof AppPacsRoute
   '/app/reports': typeof AppReportsRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -138,8 +165,12 @@ export interface FileRoutesByTo {
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
   '/app/billing/payouts': typeof AppBillingPayoutsRoute
   '/app/billing/rate-cards': typeof AppBillingRateCardsRoute
+  '/app/pacs/endpoints': typeof AppPacsEndpointsRoute
+  '/app/pacs/ingestion': typeof AppPacsIngestionRoute
+  '/app/pacs/logs': typeof AppPacsLogsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing': typeof AppBillingIndexRoute
+  '/app/pacs': typeof AppPacsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -149,7 +180,7 @@ export interface FileRoutesById {
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
   '/app/free-pool': typeof AppFreePoolRoute
-  '/app/pacs': typeof AppPacsRoute
+  '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -157,8 +188,12 @@ export interface FileRoutesById {
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
   '/app/billing/payouts': typeof AppBillingPayoutsRoute
   '/app/billing/rate-cards': typeof AppBillingRateCardsRoute
+  '/app/pacs/endpoints': typeof AppPacsEndpointsRoute
+  '/app/pacs/ingestion': typeof AppPacsIngestionRoute
+  '/app/pacs/logs': typeof AppPacsLogsRoute
   '/app/studies/$studyId': typeof AppStudiesStudyIdRoute
   '/app/billing/': typeof AppBillingIndexRoute
+  '/app/pacs/': typeof AppPacsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,15 +212,18 @@ export interface FileRouteTypes {
     | '/app/billing/invoices'
     | '/app/billing/payouts'
     | '/app/billing/rate-cards'
+    | '/app/pacs/endpoints'
+    | '/app/pacs/ingestion'
+    | '/app/pacs/logs'
     | '/app/studies/$studyId'
     | '/app/billing/'
+    | '/app/pacs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/app/approvals'
     | '/app/cms'
     | '/app/free-pool'
-    | '/app/pacs'
     | '/app/reports'
     | '/app/studies'
     | '/auth/callback'
@@ -193,8 +231,12 @@ export interface FileRouteTypes {
     | '/app/billing/invoices'
     | '/app/billing/payouts'
     | '/app/billing/rate-cards'
+    | '/app/pacs/endpoints'
+    | '/app/pacs/ingestion'
+    | '/app/pacs/logs'
     | '/app/studies/$studyId'
     | '/app/billing'
+    | '/app/pacs'
   id:
     | '__root__'
     | '/'
@@ -211,8 +253,12 @@ export interface FileRouteTypes {
     | '/app/billing/invoices'
     | '/app/billing/payouts'
     | '/app/billing/rate-cards'
+    | '/app/pacs/endpoints'
+    | '/app/pacs/ingestion'
+    | '/app/pacs/logs'
     | '/app/studies/$studyId'
     | '/app/billing/'
+    | '/app/pacs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -300,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppApprovalsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/pacs/': {
+      id: '/app/pacs/'
+      path: '/'
+      fullPath: '/app/pacs/'
+      preLoaderRoute: typeof AppPacsIndexRouteImport
+      parentRoute: typeof AppPacsRoute
+    }
     '/app/billing/': {
       id: '/app/billing/'
       path: '/'
@@ -313,6 +366,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/studies/$studyId'
       preLoaderRoute: typeof AppStudiesStudyIdRouteImport
       parentRoute: typeof AppStudiesRoute
+    }
+    '/app/pacs/logs': {
+      id: '/app/pacs/logs'
+      path: '/logs'
+      fullPath: '/app/pacs/logs'
+      preLoaderRoute: typeof AppPacsLogsRouteImport
+      parentRoute: typeof AppPacsRoute
+    }
+    '/app/pacs/ingestion': {
+      id: '/app/pacs/ingestion'
+      path: '/ingestion'
+      fullPath: '/app/pacs/ingestion'
+      preLoaderRoute: typeof AppPacsIngestionRouteImport
+      parentRoute: typeof AppPacsRoute
+    }
+    '/app/pacs/endpoints': {
+      id: '/app/pacs/endpoints'
+      path: '/endpoints'
+      fullPath: '/app/pacs/endpoints'
+      preLoaderRoute: typeof AppPacsEndpointsRouteImport
+      parentRoute: typeof AppPacsRoute
     }
     '/app/billing/rate-cards': {
       id: '/app/billing/rate-cards'
@@ -356,6 +430,23 @@ const AppBillingRouteWithChildren = AppBillingRoute._addFileChildren(
   AppBillingRouteChildren,
 )
 
+interface AppPacsRouteChildren {
+  AppPacsEndpointsRoute: typeof AppPacsEndpointsRoute
+  AppPacsIngestionRoute: typeof AppPacsIngestionRoute
+  AppPacsLogsRoute: typeof AppPacsLogsRoute
+  AppPacsIndexRoute: typeof AppPacsIndexRoute
+}
+
+const AppPacsRouteChildren: AppPacsRouteChildren = {
+  AppPacsEndpointsRoute: AppPacsEndpointsRoute,
+  AppPacsIngestionRoute: AppPacsIngestionRoute,
+  AppPacsLogsRoute: AppPacsLogsRoute,
+  AppPacsIndexRoute: AppPacsIndexRoute,
+}
+
+const AppPacsRouteWithChildren =
+  AppPacsRoute._addFileChildren(AppPacsRouteChildren)
+
 interface AppStudiesRouteChildren {
   AppStudiesStudyIdRoute: typeof AppStudiesStudyIdRoute
 }
@@ -373,7 +464,7 @@ interface AppRouteChildren {
   AppBillingRoute: typeof AppBillingRouteWithChildren
   AppCmsRoute: typeof AppCmsRoute
   AppFreePoolRoute: typeof AppFreePoolRoute
-  AppPacsRoute: typeof AppPacsRoute
+  AppPacsRoute: typeof AppPacsRouteWithChildren
   AppReportsRoute: typeof AppReportsRoute
   AppStudiesRoute: typeof AppStudiesRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
@@ -384,7 +475,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBillingRoute: AppBillingRouteWithChildren,
   AppCmsRoute: AppCmsRoute,
   AppFreePoolRoute: AppFreePoolRoute,
-  AppPacsRoute: AppPacsRoute,
+  AppPacsRoute: AppPacsRouteWithChildren,
   AppReportsRoute: AppReportsRoute,
   AppStudiesRoute: AppStudiesRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
