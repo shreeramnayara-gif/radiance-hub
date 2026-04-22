@@ -56,6 +56,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
         <div className="border-t border-sidebar-border p-4">
           <DevRoleSwitcher />
+          <TokenClaimsInspector />
           <div className="text-sm font-medium truncate">{(user?.profile?.name as string) ?? user?.profile?.preferred_username ?? "Unknown user"}</div>
           <div className="text-xs text-sidebar-foreground/60 mb-3">{displayRole}</div>
           <Button
