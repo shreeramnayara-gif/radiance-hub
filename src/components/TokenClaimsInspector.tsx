@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/auth/AuthProvider";
 import { ROLE_LABELS, ROLES, type Role } from "@/lib/roles";
 import {
+  buildFixSuggestions,
   buildRoleMappingReport,
   decodeJwt,
   logRoleMismatches,
@@ -29,6 +30,7 @@ export function TokenClaimsInspector() {
   // In dev bypass we don't have a real JWT — surface the mock profile claims instead.
   const payload = decoded?.payload ?? (user?.profile as Record<string, unknown> | undefined);
   const report = useMemo(() => buildRoleMappingReport(payload), [payload]);
+  const fixes = useMemo(() => buildFixSuggestions(report), [report]);
 
   // Log mismatches whenever a new token/profile is observed.
   useEffect(() => {
@@ -109,6 +111,43 @@ export function TokenClaimsInspector() {
               </div>
             )}
           </Section>
+
+          {fixes.length > 0 && (
+            <Section title={`How to fix mismatches (${fixes.length})`}>
+              <ul className="space-y-3">
+                {fixes.map((f) => (
+                  <li
+                    key={`${f.source}:${f.claim}`}
+                    className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm"
+                  >
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <Badge variant="destructive" className="font-mono">
+                        {f.claim}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">from</span>
+                      <code className="text-xs font-mono">{f.source}</code>
+                      <Badge variant="outline" className="ml-auto text-xs">
+                        {f.mapper}
+                      </Badge>
+                    </div>
+                    {f.likelyRole && (
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Likely intended app role:{" "}
+                        <span className="font-medium text-foreground">
+                          {ROLE_LABELS[f.likelyRole]}
+                        </span>
+                      </p>
+                    )}
+                    <ol className="list-decimal list-inside space-y-1 text-xs leading-relaxed">
+                      {f.steps.map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ol>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
 
           <Section title="Roles not granted to this user">
             <div className="flex flex-wrap gap-1.5">
