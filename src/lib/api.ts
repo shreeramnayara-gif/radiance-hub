@@ -18,8 +18,10 @@ async function authHeader(): Promise<Record<string, string>> {
 }
 
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const isFormData = typeof FormData !== "undefined" && init.body instanceof FormData;
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    // Let the browser set Content-Type (with boundary) for multipart uploads.
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     Accept: "application/json",
     ...(await authHeader()),
     ...((init.headers as Record<string, string>) ?? {}),
