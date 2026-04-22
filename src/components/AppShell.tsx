@@ -4,6 +4,7 @@ import { useAuth } from "@/auth/AuthProvider";
 import { ROLES, ROLE_LABELS, type Role } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { DevRoleSwitcher } from "@/components/DevRoleSwitcher";
+import { TokenClaimsInspector } from "@/components/TokenClaimsInspector";
 import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity, Search, BarChart3 } from "lucide-react";
 
 interface NavItem {
