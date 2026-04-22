@@ -179,6 +179,157 @@ export function buildRoleMappingReport(
 }
 
 /* ------------------------------------------------------------------ */
+/* Fix-it suggestions for unmapped claims                              */
+/* ------------------------------------------------------------------ */
+
+export interface FixSuggestion {
+  /** The unmapped raw claim string. */
+  claim: string;
+  /** Where this claim was found in the token (e.g. resource_access.foo.roles). */
+  source: string;
+  /** Closest app role this claim probably refers to (if any). */
+  likelyRole: Role | null;
+  /** Which Keycloak admin screen to open. */
+  mapper:
+    | "Realm Roles"
+    | "Client Role Mapper"
+    | "Group Mapper"
+    | "Hardcoded Claim / Role Name Mapper"
+    | "Client Scope: roles";
+  /** Step-by-step fix the operator can follow. */
+  steps: string[];
+}
+
+const APP_ROLES = Object.values(ROLES) as Role[];
+
+/** Cheap Levenshtein for short strings — picks the closest app role for a typo'd claim. */
+function distance(a: string, b: string): number {
+  if (a === b) return 0;
+  const al = a.length;
+  const bl = b.length;
+  if (!al) return bl;
+  if (!bl) return al;
+  const dp = Array.from({ length: al + 1 }, (_, i) => [i, ...Array(bl).fill(0)]);
+  for (let j = 1; j <= bl; j++) dp[0][j] = j;
+  for (let i = 1; i <= al; i++) {
+    for (let j = 1; j <= bl; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+    }
+  }
+  return dp[al][bl];
+}
+
+function closestRole(claim: string): Role | null {
+  const norm = claim.trim().toLowerCase().replace(/[-\s]/g, "_");
+  let best: Role | null = null;
+  let bestD = Infinity;
+  for (const r of APP_ROLES) {
+    const d = distance(norm, r);
+    if (d < bestD) {
+      bestD = d;
+      best = r;
+    }
+  }
+  // Only suggest if reasonably close (< 40% of role length).
+  return best && bestD <= Math.max(2, Math.floor(best.length * 0.4)) ? best : null;
+}
+
+export function buildFixSuggestions(report: RoleMappingReport): FixSuggestion[] {
+  const out: FixSuggestion[] = [];
+  // Map claim -> first source path that contained it.
+  const sourceFor = new Map<string, string>();
+  for (const s of report.sources) {
+    for (const v of s.values) if (!sourceFor.has(v)) sourceFor.set(v, s.path);
+  }
+
+  for (const claim of report.unmapped) {
+    const source = sourceFor.get(claim) ?? "unknown";
+    const likely = closestRole(claim);
+
+    if (source.startsWith("resource_access.")) {
+      const client = source.split(".")[1] ?? "<client>";
+      out.push({
+        claim,
+        source,
+        likelyRole: likely,
+        mapper: "Client Role Mapper",
+        steps: [
+          `Open Keycloak → Clients → ${client} → Roles.`,
+          likely
+            ? `Rename role "${claim}" to "${likely}" so the app maps it directly, OR add an alias to ROLE_ALIASES in src/lib/tokenClaims.ts.`
+            : `This client role doesn't match any app role. Either delete it or add a mapping in ROLE_ALIASES.`,
+          `Move it to realm-level roles if every client should see it: Clients → ${client} → Client scopes → Dedicated → add a "User Realm Role" mapper.`,
+        ],
+      });
+      continue;
+    }
+
+    if (source === "groups") {
+      out.push({
+        claim,
+        source,
+        likelyRole: likely,
+        mapper: "Group Mapper",
+        steps: [
+          `Open Keycloak → Client Scopes → roles → Mappers (or your client's Dedicated scope).`,
+          `Add a "Group Membership" mapper if missing — token claim name "groups", "Full group path" OFF.`,
+          likely
+            ? `Either rename the group "${claim}" to "${likely}" in Groups, or assign realm role "${likely}" to that group so it appears in realm_access.roles.`
+            : `Map this group to a realm role via Groups → ${claim} → Role mappings → assign one of: ${APP_ROLES.join(", ")}.`,
+        ],
+      });
+      continue;
+    }
+
+    if (source === "realm_access.roles") {
+      out.push({
+        claim,
+        source,
+        likelyRole: likely,
+        mapper: "Realm Roles",
+        steps: [
+          `Open Keycloak → Realm roles.`,
+          likely
+            ? `Rename "${claim}" → "${likely}" (Realm roles → ${claim} → Action → Rename), then re-assign to users/groups.`
+            : `This realm role isn't recognised. Either delete it or add it to ROLE_ALIASES in src/lib/tokenClaims.ts.`,
+          `Verify the client scope "roles" is assigned to your client (Clients → <id> → Client scopes).`,
+        ],
+      });
+      continue;
+    }
+
+    if (source === "roles") {
+      out.push({
+        claim,
+        source,
+        likelyRole: likely,
+        mapper: "Hardcoded Claim / Role Name Mapper",
+        steps: [
+          `A flat "roles" claim is non-standard for Keycloak — it usually comes from a custom protocol mapper.`,
+          `Open Keycloak → Clients → <your client> → Client scopes → Dedicated → Mappers.`,
+          `Edit the mapper that emits "roles" and ensure values match: ${APP_ROLES.join(", ")}.`,
+          likely ? `Likely intended app role: "${likely}".` : `No close match — remove this claim or extend ROLE_ALIASES.`,
+        ],
+      });
+      continue;
+    }
+
+    out.push({
+      claim,
+      source,
+      likelyRole: likely,
+      mapper: "Client Scope: roles",
+      steps: [
+        `Claim "${claim}" came from "${source}" which the app doesn't inspect.`,
+        `Move it into realm_access.roles via Keycloak → Client Scopes → roles → Mappers → "realm roles".`,
+        likely ? `Likely intended app role: "${likely}".` : `Add a matching ROLE_ALIASES entry if you want to keep this name.`,
+      ],
+    });
+  }
+
+  return out;
+/* ------------------------------------------------------------------ */
 /* Console diagnostics                                                 */
 /* ------------------------------------------------------------------ */
 
