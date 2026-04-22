@@ -112,6 +112,43 @@ export function TokenClaimsInspector() {
             )}
           </Section>
 
+          {fixes.length > 0 && (
+            <Section title={`How to fix mismatches (${fixes.length})`}>
+              <ul className="space-y-3">
+                {fixes.map((f) => (
+                  <li
+                    key={`${f.source}:${f.claim}`}
+                    className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm"
+                  >
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <Badge variant="destructive" className="font-mono">
+                        {f.claim}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">from</span>
+                      <code className="text-xs font-mono">{f.source}</code>
+                      <Badge variant="outline" className="ml-auto text-xs">
+                        {f.mapper}
+                      </Badge>
+                    </div>
+                    {f.likelyRole && (
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Likely intended app role:{" "}
+                        <span className="font-medium text-foreground">
+                          {ROLE_LABELS[f.likelyRole]}
+                        </span>
+                      </p>
+                    )}
+                    <ol className="list-decimal list-inside space-y-1 text-xs leading-relaxed">
+                      {f.steps.map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ol>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
           <Section title="Roles not granted to this user">
             <div className="flex flex-wrap gap-1.5">
               {ALL_ROLES.map((r) => (
