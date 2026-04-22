@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/auth/AuthProvider";
 import { ROLE_LABELS, ROLES, type Role } from "@/lib/roles";
 import {
+  buildFixSuggestions,
   buildRoleMappingReport,
   decodeJwt,
   logRoleMismatches,
