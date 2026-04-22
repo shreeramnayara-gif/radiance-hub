@@ -5,7 +5,7 @@ import { ROLES, ROLE_LABELS, type Role } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { DevRoleSwitcher } from "@/components/DevRoleSwitcher";
 import { TokenClaimsInspector } from "@/components/TokenClaimsInspector";
-import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity, Search, BarChart3 } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity, Search, BarChart3, Inbox, Upload } from "lucide-react";
 
 interface NavItem {
   to: string;
@@ -20,7 +20,9 @@ const NAV: NavItem[] = [
   { to: "/app/analytics", label: "Analytics", icon: BarChart3, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST, ROLES.HOSPITAL, ROLES.DIAGNOSTIC_CENTRE] },
   { to: "/app/approvals", label: "User Approvals", icon: Users, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN] },
   { to: "/app/studies", label: "Studies", icon: FileImage, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST, ROLES.HOSPITAL, ROLES.DIAGNOSTIC_CENTRE] },
-  { to: "/app/free-pool", label: "Free Pool", icon: Activity, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST] },
+  { to: "/app/fetch-cases", label: "Fetch Cases", icon: Inbox, allow: [ROLES.RADIOLOGIST] },
+  { to: "/app/upload", label: "Upload Cases", icon: Upload, allow: [ROLES.HOSPITAL, ROLES.DIAGNOSTIC_CENTRE] },
+  { to: "/app/free-pool", label: "Free Pool", icon: Activity, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN] },
   { to: "/app/reports", label: "Reports", icon: FileText, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST] },
   { to: "/app/billing", label: "Billing", icon: Wallet, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.RADIOLOGIST, ROLES.HOSPITAL, ROLES.DIAGNOSTIC_CENTRE] },
   { to: "/app/pacs", label: "PACS", icon: Plug, allow: [ROLES.SUPER_ADMIN, ROLES.SUB_ADMIN, ROLES.PACS] },
