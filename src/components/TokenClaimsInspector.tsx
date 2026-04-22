@@ -30,6 +30,7 @@ export function TokenClaimsInspector() {
   // In dev bypass we don't have a real JWT — surface the mock profile claims instead.
   const payload = decoded?.payload ?? (user?.profile as Record<string, unknown> | undefined);
   const report = useMemo(() => buildRoleMappingReport(payload), [payload]);
+  const fixes = useMemo(() => buildFixSuggestions(report), [report]);
 
   // Log mismatches whenever a new token/profile is observed.
   useEffect(() => {
