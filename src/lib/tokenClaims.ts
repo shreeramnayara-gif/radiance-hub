@@ -329,6 +329,8 @@ export function buildFixSuggestions(report: RoleMappingReport): FixSuggestion[] 
   }
 
   return out;
+}
+
 /* ------------------------------------------------------------------ */
 /* Console diagnostics                                                 */
 /* ------------------------------------------------------------------ */
