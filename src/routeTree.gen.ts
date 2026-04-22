@@ -13,11 +13,13 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AppUploadRouteImport } from './routes/app.upload'
 import { Route as AppStudiesRouteImport } from './routes/app.studies'
 import { Route as AppSearchRouteImport } from './routes/app.search'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppPacsRouteImport } from './routes/app.pacs'
 import { Route as AppFreePoolRouteImport } from './routes/app.free-pool'
+import { Route as AppFetchCasesRouteImport } from './routes/app.fetch-cases'
 import { Route as AppCmsRouteImport } from './routes/app.cms'
 import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppApprovalsRouteImport } from './routes/app.approvals'
@@ -52,6 +54,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppUploadRoute = AppUploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppStudiesRoute = AppStudiesRouteImport.update({
   id: '/studies',
   path: '/studies',
@@ -75,6 +82,11 @@ const AppPacsRoute = AppPacsRouteImport.update({
 const AppFreePoolRoute = AppFreePoolRouteImport.update({
   id: '/free-pool',
   path: '/free-pool',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFetchCasesRoute = AppFetchCasesRouteImport.update({
+  id: '/fetch-cases',
+  path: '/fetch-cases',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCmsRoute = AppCmsRouteImport.update({
@@ -150,11 +162,13 @@ export interface FileRoutesByFullPath {
   '/app/approvals': typeof AppApprovalsRoute
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
+  '/app/fetch-cases': typeof AppFetchCasesRoute
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
   '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
+  '/app/upload': typeof AppUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
@@ -172,10 +186,12 @@ export interface FileRoutesByTo {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/approvals': typeof AppApprovalsRoute
   '/app/cms': typeof AppCmsRoute
+  '/app/fetch-cases': typeof AppFetchCasesRoute
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/reports': typeof AppReportsRoute
   '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
+  '/app/upload': typeof AppUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/app': typeof AppIndexRoute
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
@@ -196,11 +212,13 @@ export interface FileRoutesById {
   '/app/approvals': typeof AppApprovalsRoute
   '/app/billing': typeof AppBillingRouteWithChildren
   '/app/cms': typeof AppCmsRoute
+  '/app/fetch-cases': typeof AppFetchCasesRoute
   '/app/free-pool': typeof AppFreePoolRoute
   '/app/pacs': typeof AppPacsRouteWithChildren
   '/app/reports': typeof AppReportsRoute
   '/app/search': typeof AppSearchRoute
   '/app/studies': typeof AppStudiesRouteWithChildren
+  '/app/upload': typeof AppUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/app/': typeof AppIndexRoute
   '/app/billing/invoices': typeof AppBillingInvoicesRoute
@@ -222,11 +240,13 @@ export interface FileRouteTypes {
     | '/app/approvals'
     | '/app/billing'
     | '/app/cms'
+    | '/app/fetch-cases'
     | '/app/free-pool'
     | '/app/pacs'
     | '/app/reports'
     | '/app/search'
     | '/app/studies'
+    | '/app/upload'
     | '/auth/callback'
     | '/app/'
     | '/app/billing/invoices'
@@ -244,10 +264,12 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/approvals'
     | '/app/cms'
+    | '/app/fetch-cases'
     | '/app/free-pool'
     | '/app/reports'
     | '/app/search'
     | '/app/studies'
+    | '/app/upload'
     | '/auth/callback'
     | '/app'
     | '/app/billing/invoices'
@@ -267,11 +289,13 @@ export interface FileRouteTypes {
     | '/app/approvals'
     | '/app/billing'
     | '/app/cms'
+    | '/app/fetch-cases'
     | '/app/free-pool'
     | '/app/pacs'
     | '/app/reports'
     | '/app/search'
     | '/app/studies'
+    | '/app/upload'
     | '/auth/callback'
     | '/app/'
     | '/app/billing/invoices'
@@ -321,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/upload': {
+      id: '/app/upload'
+      path: '/upload'
+      fullPath: '/app/upload'
+      preLoaderRoute: typeof AppUploadRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/studies': {
       id: '/app/studies'
       path: '/studies'
@@ -354,6 +385,13 @@ declare module '@tanstack/react-router' {
       path: '/free-pool'
       fullPath: '/app/free-pool'
       preLoaderRoute: typeof AppFreePoolRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/fetch-cases': {
+      id: '/app/fetch-cases'
+      path: '/fetch-cases'
+      fullPath: '/app/fetch-cases'
+      preLoaderRoute: typeof AppFetchCasesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/cms': {
@@ -502,11 +540,13 @@ interface AppRouteChildren {
   AppApprovalsRoute: typeof AppApprovalsRoute
   AppBillingRoute: typeof AppBillingRouteWithChildren
   AppCmsRoute: typeof AppCmsRoute
+  AppFetchCasesRoute: typeof AppFetchCasesRoute
   AppFreePoolRoute: typeof AppFreePoolRoute
   AppPacsRoute: typeof AppPacsRouteWithChildren
   AppReportsRoute: typeof AppReportsRoute
   AppSearchRoute: typeof AppSearchRoute
   AppStudiesRoute: typeof AppStudiesRouteWithChildren
+  AppUploadRoute: typeof AppUploadRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -515,11 +555,13 @@ const AppRouteChildren: AppRouteChildren = {
   AppApprovalsRoute: AppApprovalsRoute,
   AppBillingRoute: AppBillingRouteWithChildren,
   AppCmsRoute: AppCmsRoute,
+  AppFetchCasesRoute: AppFetchCasesRoute,
   AppFreePoolRoute: AppFreePoolRoute,
   AppPacsRoute: AppPacsRouteWithChildren,
   AppReportsRoute: AppReportsRoute,
   AppSearchRoute: AppSearchRoute,
   AppStudiesRoute: AppStudiesRouteWithChildren,
+  AppUploadRoute: AppUploadRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
