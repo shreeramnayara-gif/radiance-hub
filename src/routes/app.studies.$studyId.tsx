@@ -18,6 +18,7 @@ import { ViewerFrame } from "@/components/workflow/ViewerFrame";
 import { ReportEditor } from "@/components/workflow/ReportEditor";
 import { CommentsPanel } from "@/components/workflow/CommentsPanel";
 import { AssignDialog } from "@/components/workflow/AssignDialog";
+import { PatientInfoCard } from "@/components/workflow/PatientInfoCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, FileCheck2, History, Loader2, RotateCcw, Send, UserPlus } from "lucide-react";
 
@@ -199,6 +200,7 @@ function StudyWorkspace() {
           <ViewerFrame studyId={study.id} studyInstanceUID={study.studyInstanceUID} />
         </section>
         <section className="overflow-y-auto p-6 space-y-6">
+          <PatientInfoCard study={study} anonymized={anon} />
           <div>
             <div className="flex items-center justify-between mb-2">
               <h2 className="font-semibold text-sm flex items-center gap-2"><FileCheck2 className="h-4 w-4" /> Report</h2>
