@@ -71,6 +71,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
+    // OIDC not configured → degrade gracefully: no user, no loading spinner.
+    if (!isOidcConfigured()) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
 
     let mounted = true;
     let mgr: ReturnType<typeof getUserManager> | null = null;
@@ -129,6 +135,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setDevActiveRoles,
       login: async () => {
         if (isDevBypass) return;
+        if (!isOidcConfigured()) {
+          console.warn("[auth] login() called but OIDC is not configured");
+          return;
+        }
         try {
           await getUserManager().signinRedirect();
         } catch (e) {
@@ -140,6 +150,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (isDevBypass) {
           setUser(null);
           setIsDevBypass(false);
+          return;
+        }
+        if (!isOidcConfigured()) {
+          setUser(null);
           return;
         }
         try {

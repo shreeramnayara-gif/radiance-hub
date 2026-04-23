@@ -226,6 +226,16 @@ export const pacsService = {
   listLogs: (q?: SyncLogQuery) =>
     apiFetch<SyncLogListResponse>(`/pacs/logs${buildLogsQuery(q)}`),
   health: () => apiFetch<PacsHealthSummary>(`/pacs/health`),
+  /**
+   * Programmatic connectivity check — pings the backend probe for an
+   * unsaved/saved endpoint config. Useful from setup wizards and the
+   * health dashboard.
+   */
+  probeEndpoint: (input: PacsEndpointInput | { id: string }) =>
+    apiFetch<PacsTestResult>(`/pacs/endpoints/probe`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
 };
 
 /* -------- Slice 5: Search & Analytics -------- */
