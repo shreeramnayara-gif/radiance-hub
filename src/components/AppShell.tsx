@@ -5,6 +5,7 @@ import { ROLES, ROLE_LABELS, type Role } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { DevRoleSwitcher } from "@/components/DevRoleSwitcher";
 import { TokenClaimsInspector } from "@/components/TokenClaimsInspector";
+import { KeycloakSetupBanner } from "@/components/KeycloakSetupBanner";
 import { LogOut, LayoutDashboard, Users, FileImage, FileText, Wallet, Plug, Settings, Activity, Search, BarChart3, Inbox, Upload } from "lucide-react";
 
 interface NavItem {
@@ -74,7 +75,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Button>
         </div>
       </aside>
-      <main className="flex flex-col min-h-screen">{children}</main>
+      <main className="flex flex-col min-h-screen">
+        <KeycloakSetupBanner />
+        {children}
+      </main>
     </div>
   );
 }

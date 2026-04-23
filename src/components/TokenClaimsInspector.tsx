@@ -7,6 +7,7 @@ import {
   decodeJwt,
   logRoleMismatches,
 } from "@/lib/tokenClaims";
+import { inspectKeycloakSetup } from "@/lib/keycloak-checklist";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ShieldCheck, AlertTriangle, KeyRound } from "lucide-react";
+import { ShieldCheck, AlertTriangle, KeyRound, ShieldAlert } from "lucide-react";
 
 const ALL_ROLES = Object.values(ROLES) as Role[];
 
@@ -31,6 +32,10 @@ export function TokenClaimsInspector() {
   const payload = decoded?.payload ?? (user?.profile as Record<string, unknown> | undefined);
   const report = useMemo(() => buildRoleMappingReport(payload), [payload]);
   const fixes = useMemo(() => buildFixSuggestions(report), [report]);
+  const kcWarnings = useMemo(
+    () => inspectKeycloakSetup(user?.access_token),
+    [user?.access_token],
+  );
 
   // Log mismatches whenever a new token/profile is observed.
   useEffect(() => {
