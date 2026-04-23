@@ -87,6 +87,47 @@ export function TokenClaimsInspector() {
             />
           </div>
 
+          {kcWarnings.length > 0 && (
+            <Section title={`Keycloak setup warnings (${kcWarnings.length})`}>
+              <ul className="space-y-2">
+                {kcWarnings.map((w) => (
+                  <li
+                    key={w.id}
+                    className={
+                      "rounded-md border p-3 text-sm " +
+                      (w.severity === "error"
+                        ? "border-destructive/40 bg-destructive/5"
+                        : w.severity === "warning"
+                          ? "border-amber-500/30 bg-amber-500/5"
+                          : "border-border bg-muted/30")
+                    }
+                  >
+                    <div className="flex items-start gap-2">
+                      <ShieldAlert
+                        className={
+                          w.severity === "error"
+                            ? "h-4 w-4 mt-0.5 text-destructive"
+                            : w.severity === "warning"
+                              ? "h-4 w-4 mt-0.5 text-amber-500"
+                              : "h-4 w-4 mt-0.5 text-muted-foreground"
+                        }
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium">{w.title}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{w.detail}</div>
+                        <ol className="list-decimal list-inside space-y-1 text-xs leading-relaxed mt-2">
+                          {w.steps.map((s, i) => (
+                            <li key={i}>{s}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
           <Section title="Mapped app roles">
             {report.mapped.length === 0 ? (
               <p className="text-sm text-destructive">
