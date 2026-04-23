@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { User } from "oidc-client-ts";
-import { getUserManager } from "@/lib/oidc";
+import { getUserManager, isOidcConfigured } from "@/lib/oidc";
 import { extractRoles, ROLES, type Role } from "@/lib/roles";
 import { env } from "@/lib/env";
 

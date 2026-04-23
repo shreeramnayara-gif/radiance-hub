@@ -4,4 +4,29 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+
+  // -------------------------------------------------------------------
+  // Cloudflare Pages / Workers — required environment variables.
+  //
+  // Set these in the Cloudflare dashboard (Pages → Settings → Environment
+  // variables) for both Production and Preview environments, OR via
+  // `wrangler pages secret put <NAME>` for sensitive values. They are
+  // baked into the client bundle at build time, so they must be present
+  // BEFORE the build runs (configure them as Build env vars too).
+  //
+  // See .env.example for full descriptions.
+  //
+  //   VITE_OIDC_AUTHORITY                — Keycloak realm issuer URL
+  //   VITE_OIDC_CLIENT_ID                — Public OIDC client ID
+  //   VITE_OIDC_REDIRECT_URI             — Optional; defaults to origin
+  //   VITE_OIDC_POST_LOGOUT_REDIRECT_URI — Optional; defaults to origin
+  //   VITE_OIDC_SCOPE                    — Default: "openid profile email roles"
+  //   VITE_API_BASE_URL                  — Backend REST API base URL
+  //   VITE_ORTHANC_BASE_URL              — Orthanc REST base (operator-only)
+  //   VITE_ORTHANC_WADO_RS_ROOT          — WADO-RS root for OHIF
+  //   VITE_OHIF_VIEWER_URL               — OHIF Viewer 3.x deployment URL
+  //
+  // DO NOT set VITE_DEV_MODE in Cloudflare — it is dev-only and ignored
+  // by production builds.
+  // -------------------------------------------------------------------
 }

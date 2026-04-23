@@ -19,6 +19,7 @@ export const env = {
   },
   orthanc: {
     baseUrl: import.meta.env.VITE_ORTHANC_BASE_URL ?? "",
+    wadoRsRoot: import.meta.env.VITE_ORTHANC_WADO_RS_ROOT ?? "",
   },
   ohif: {
     viewerUrl: import.meta.env.VITE_OHIF_VIEWER_URL ?? "",
