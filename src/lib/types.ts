@@ -48,6 +48,10 @@ export interface Study {
   referringHospital?: string | null;
   referringCentre?: string | null;
   pacsSourceName?: string | null;
+  /** Orthanc-side ID for the study, used for direct PACS lookups when present. */
+  orthancStudyId?: string | null;
+  /** WADO-RS root the OHIF viewer should use to fetch this study's frames. */
+  wadoRsRoot?: string | null;
   reportVersion?: number;
   updatedAt: string;
   createdAt: string;

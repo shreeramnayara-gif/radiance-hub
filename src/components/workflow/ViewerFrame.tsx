@@ -16,12 +16,26 @@ export function ViewerFrame({ studyId, studyInstanceUID }: { studyId: string; st
     queryFn: () => studiesService.viewerUrl(studyId),
     retry: 0,
     staleTime: 60_000,
+    // 404 from /viewer-url just means the backend hasn't shipped that endpoint
+    // yet — fall back silently to the configured OHIF base.
+    throwOnError: false,
   });
 
-  const fallback = env.ohif.viewerUrl
-    ? `${env.ohif.viewerUrl}${env.ohif.viewerUrl.includes("?") ? "&" : "?"}StudyInstanceUIDs=${encodeURIComponent(studyInstanceUID)}`
-    : "";
-  const url = data?.url ?? (error ? fallback : "");
+  // OHIF 3.x route is `/viewer?StudyInstanceUIDs=…`. Accept either a bare
+  // origin (`https://viewer.example.com`) or a full path the operator typed.
+  const fallback = (() => {
+    const base = env.ohif.viewerUrl?.trim();
+    if (!base) return "";
+    const hasViewerPath = /\/viewer(\b|\/|\?)/i.test(base);
+    const root = base.replace(/\/+$/, "");
+    const url = hasViewerPath ? root : `${root}/viewer`;
+    const sep = url.includes("?") ? "&" : "?";
+    return `${url}${sep}StudyInstanceUIDs=${encodeURIComponent(studyInstanceUID)}`;
+  })();
+
+  // Treat 404 as "endpoint not implemented yet" — quiet fallback, no console noise.
+  const is404 = error instanceof Error && /\b404\b/.test(error.message);
+  const url = data?.url ?? ((error || is404) ? fallback : "");
 
   if (isLoading && !fallback) {
     return (
