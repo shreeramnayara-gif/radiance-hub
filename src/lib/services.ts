@@ -99,12 +99,41 @@ export const studiesService = {
    * Upload one or more DICOM files (or a zipped study) from a hospital/centre
    * portal. Backend ingests into Orthanc and creates Study records.
    */
-  upload: (files: File[], meta?: { referringHospital?: string; referringCentre?: string; notes?: string }) => {
+  upload: (
+    files: File[],
+    meta?: {
+      referringHospital?: string;
+      referringCentre?: string;
+      notes?: string;
+      // Patient demographics
+      patientName?: string;
+      patientId?: string;
+      patientMrn?: string;
+      patientSex?: "M" | "F" | "O";
+      patientBirthDate?: string;
+      patientAge?: string;
+      patientPhone?: string;
+      // Study request
+      modality?: string;
+      bodyPart?: string;
+      requestedStudy?: string;
+      accessionNumber?: string;
+      // Clinical context
+      referringPhysician?: string;
+      clinicalHistory?: string;
+      indication?: string;
+      priorImaging?: string;
+      allergies?: string;
+      urgency?: "routine" | "urgent" | "stat";
+    },
+  ) => {
     const fd = new FormData();
     files.forEach((f) => fd.append("files", f, f.name));
-    if (meta?.referringHospital) fd.append("referringHospital", meta.referringHospital);
-    if (meta?.referringCentre) fd.append("referringCentre", meta.referringCentre);
-    if (meta?.notes) fd.append("notes", meta.notes);
+    if (meta) {
+      Object.entries(meta).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== "") fd.append(k, String(v));
+      });
+    }
     return apiFetch<{ uploaded: number; studies: Study[] }>(`/studies/upload`, {
       method: "POST",
       body: fd,
