@@ -32,6 +32,19 @@ export interface StudyPatient {
   name?: string | null;
   sex?: "M" | "F" | "O" | null;
   birthDate?: string | null;
+  age?: number | null;
+  phone?: string | null;
+  mrn?: string | null;
+}
+
+/** Clinical context captured at upload time by the referring facility. */
+export interface ClinicalContext {
+  referringPhysician?: string | null;
+  clinicalHistory?: string | null;
+  indication?: string | null;
+  priorImaging?: string | null;
+  allergies?: string | null;
+  urgency?: "routine" | "urgent" | "stat" | null;
 }
 
 export interface Study {
@@ -48,6 +61,10 @@ export interface Study {
   referringHospital?: string | null;
   referringCentre?: string | null;
   pacsSourceName?: string | null;
+  /** Clinical context provided by the uploading facility. */
+  clinical?: ClinicalContext | null;
+  /** Requested study/exam type from the referring facility. */
+  requestedStudy?: string | null;
   /** Orthanc-side ID for the study, used for direct PACS lookups when present. */
   orthancStudyId?: string | null;
   /** WADO-RS root the OHIF viewer should use to fetch this study's frames. */
