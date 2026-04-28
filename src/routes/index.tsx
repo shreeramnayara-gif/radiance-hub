@@ -32,7 +32,7 @@ const FALLBACK = {
 };
 
 function LandingPage() {
-  const { isAuthenticated, login, enableDevBypass, isDevBypass } = useAuth();
+  const { isAuthenticated, login, signup, enableDevBypass, isDevBypass } = useAuth();
   const { data } = useQuery({
     queryKey: ["cms", "landing"],
     queryFn: () => cmsService.getLanding().catch(() => null),
@@ -59,7 +59,7 @@ function LandingPage() {
             ) : (
               <>
                 <Button size="sm" variant="ghost" onClick={() => login()} className="rounded-full hidden sm:inline-flex">Sign in</Button>
-                <Button size="sm" onClick={() => login()} className="rounded-full px-5">Sign up</Button>
+                <Button size="sm" onClick={() => signup()} className="rounded-full px-5">Sign up</Button>
               </>
             )}
           </div>
@@ -106,7 +106,7 @@ function LandingPage() {
                 </Button>
               ) : (
                 <>
-                  <Button size="lg" onClick={() => login()} className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20">
+                  <Button size="lg" onClick={() => signup()} className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20">
                     Sign up <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                   <Button size="lg" variant="outline" onClick={() => login()} className="rounded-full px-8 h-12 text-base bg-card/40 backdrop-blur">

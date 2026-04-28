@@ -15,9 +15,12 @@ interface AuthState {
   /** DEV-ONLY: change which role(s) the mock session presents. */
   setDevActiveRoles: (roles: Role[]) => void;
   login: () => Promise<void>;
+  signup: () => Promise<void>;
   logout: () => Promise<void>;
   enableDevBypass: () => void;
   disableDevBypass: () => void;
+  /** True when VITE_OIDC_AUTHORITY + VITE_OIDC_CLIENT_ID are set. */
+  isOidcReady: boolean;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -146,6 +149,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           throw e;
         }
       },
+      // Keycloak supports a "registration" entry point at
+      // /realms/<realm>/protocol/openid-connect/registrations. oidc-client-ts
+      // doesn't expose that directly, but Keycloak also accepts
+      // ?kc_action=register on the standard /auth endpoint, so we just pass
+      // it as an extra query param. Works against any Keycloak ≥ 18.
+      signup: async () => {
+        if (isDevBypass) return;
+        if (!isOidcConfigured()) {
+          console.warn("[auth] signup() called but OIDC is not configured");
+          return;
+        }
+        try {
+          await getUserManager().signinRedirect({
+            extraQueryParams: { kc_action: "register" },
+          });
+        } catch (e) {
+          console.error("[auth] signup redirect failed", e);
+          throw e;
+        }
+      },
       logout: async () => {
         if (isDevBypass) {
           setUser(null);
@@ -181,6 +204,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsDevBypass(false);
         setUser(null);
       },
+      isOidcReady: isOidcConfigured(),
     }),
     [user, isLoading, isDevBypass, devActiveRoles],
   );
