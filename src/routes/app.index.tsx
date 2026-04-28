@@ -145,19 +145,25 @@ function Overview() {
         </section>
       )}
 
-      <div className="grid gap-4 md:grid-cols-3 mb-8">
-        {[
-          { k: "Pending Approvals", v: "—" },
+      {(() => {
+        const showPendingApprovals = roles.includes(ROLES.SUPER_ADMIN);
+        const cards = [
+          showPendingApprovals ? { k: "Pending Approvals", v: "—" } : null,
           { k: "Active Studies", v: "—" },
           { k: "Awaiting Reports", v: "—" },
-        ].map((c) => (
-          <div key={c.k} className="rounded-xl border border-border bg-card p-6">
-            <div className="text-xs text-muted-foreground uppercase tracking-wider">{c.k}</div>
-            <div className="text-3xl font-display font-bold mt-2">{c.v}</div>
-            <div className="text-xs text-muted-foreground mt-1">Live data — wire to backend</div>
+        ].filter((c): c is { k: string; v: string } => c !== null);
+        return (
+          <div className="grid gap-4 md:grid-cols-3 mb-8">
+            {cards.map((c) => (
+              <div key={c.k} className="rounded-xl border border-border bg-card p-6">
+                <div className="text-xs text-muted-foreground uppercase tracking-wider">{c.k}</div>
+                <div className="text-3xl font-display font-bold mt-2">{c.v}</div>
+                <div className="text-xs text-muted-foreground mt-1">Live data — wire to backend</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        );
+      })()}
 
       {secondary.length > 0 && (
         <section>
