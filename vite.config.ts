@@ -6,4 +6,14 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+// Build target: standard Node.js server (for VPS / Docker / PM2 deployment).
+// Disables the Cloudflare Workers plugin and tells TanStack Start (Nitro under
+// the hood) to emit a Node server bundle at .output/server/index.mjs.
+//
+// Run in production with:   node .output/server/index.mjs
+export default defineConfig({
+  cloudflare: false,
+  tanstackStart: {
+    target: "node-server",
+  },
+});
