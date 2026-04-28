@@ -9,6 +9,7 @@ import { StudyTable } from "@/components/workflow/StudyTable";
 import { ModalityFilter } from "@/components/workflow/ModalityFilter";
 import { AssignDialog } from "@/components/workflow/AssignDialog";
 import { Button } from "@/components/ui/button";
+import { QuickActions } from "@/components/QuickActions";
 import { Loader2, HandIcon, UserPlus } from "lucide-react";
 
 export const Route = createFileRoute("/app/free-pool")({ component: FreePoolPage });
@@ -47,6 +48,7 @@ function FreePoolPage() {
           Unassigned studies awaiting a radiologist.{" "}
           {isRad ? "Filter by modality and claim what matches your specialty." : "Assign to an approved radiologist."}
         </p>
+        <QuickActions exclude="/app/free-pool" className="mt-4" />
       </header>
 
       <div className="rounded-xl border border-border bg-card p-4 mb-4 flex items-center justify-between gap-4 flex-wrap">

@@ -8,6 +8,7 @@ import { StudyTable } from "@/components/workflow/StudyTable";
 import { ModalityFilter } from "@/components/workflow/ModalityFilter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { QuickActions } from "@/components/QuickActions";
 import { WORKFLOW_LABELS, type WorkflowStatus, WORKFLOW_STATUS } from "@/lib/workflow";
 import { Loader2, Search } from "lucide-react";
 
@@ -51,6 +52,7 @@ function StudiesPage() {
           <Link to="/app/free-pool" className="text-sm text-primary underline-offset-4 hover:underline">Free Pool →</Link>
         </div>
       </header>
+      <QuickActions exclude="/app/studies" className="mb-6" />
 
       <div className="rounded-xl border border-border bg-card p-4 mb-4 space-y-3">
         <div className="flex items-center gap-2">

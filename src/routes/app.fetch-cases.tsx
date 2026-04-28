@@ -8,6 +8,7 @@ import { ROLES } from "@/lib/roles";
 import { StudyTable } from "@/components/workflow/StudyTable";
 import { ModalityFilter } from "@/components/workflow/ModalityFilter";
 import { Button } from "@/components/ui/button";
+import { QuickActions } from "@/components/QuickActions";
 import { Loader2, HandIcon, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/app/fetch-cases")({ component: FetchCasesPage });
@@ -63,6 +64,7 @@ function FetchCasesPage() {
         <p className="text-muted-foreground mt-2 text-sm">
           Select one or more modalities matching your specialty to pull unassigned cases. Claim a case to add it to your worklist.
         </p>
+        <QuickActions exclude="/app/fetch-cases" className="mt-4" />
       </header>
 
       <div className="rounded-xl border border-border bg-card p-4 mb-4 flex items-center justify-between gap-4 flex-wrap">

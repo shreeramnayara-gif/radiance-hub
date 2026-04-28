@@ -8,6 +8,7 @@ import { ROLES, ROLE_LABELS } from "@/lib/roles";
 import type { AppUser, UserStatus } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { QuickActions } from "@/components/QuickActions";
 import { CheckCircle2, XCircle, ShieldAlert, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/app/approvals")({
@@ -65,6 +66,7 @@ function ApprovalsPage() {
         <p className="text-xs uppercase tracking-wider text-muted-foreground">Administration</p>
         <h1 className="text-3xl font-display font-bold tracking-tight mt-1">User Approvals</h1>
         <p className="text-muted-foreground mt-2 text-sm">Approve, reject, or suspend accounts. All actions are audit-logged on the backend.</p>
+        <QuickActions exclude="/app/approvals" className="mt-4" />
       </header>
 
       <div className="flex gap-2 mb-6 border-b border-border">
