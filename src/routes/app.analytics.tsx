@@ -6,6 +6,7 @@ import { SystemAnalyticsView } from "@/components/analytics/SystemAnalyticsView"
 import { RadiologistsAnalyticsView } from "@/components/analytics/RadiologistsAnalyticsView";
 import { HospitalsAnalyticsView } from "@/components/analytics/HospitalsAnalyticsView";
 import { BillingAnalyticsView } from "@/components/analytics/BillingAnalyticsView";
+import { QuickActions } from "@/components/QuickActions";
 
 export const Route = createFileRoute("/app/analytics")({ component: AnalyticsPage });
 
@@ -44,6 +45,7 @@ function AnalyticsPage() {
         <p className="text-muted-foreground mt-2 text-sm">
           Role-scoped KPIs. The backend enforces visibility — you only see what your role permits.
         </p>
+        <QuickActions exclude="/app/analytics" className="mt-4" />
       </header>
 
       <div className="flex gap-2 mb-6 border-b border-border">

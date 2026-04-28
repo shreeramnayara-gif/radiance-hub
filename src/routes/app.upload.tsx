@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { QuickActions } from "@/components/QuickActions";
 import {
   Loader2,
   Upload as UploadIcon,
@@ -203,6 +204,7 @@ function UploadCasesPage() {
           Provide patient demographics and clinical context along with the DICOM images. The reporting
           radiologist will see this information when opening the study.
         </p>
+        <QuickActions exclude="/app/upload" className="mt-4" />
       </header>
 
       {/* Files */}
